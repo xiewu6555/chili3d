@@ -30,7 +30,7 @@ export class AnnotationPanel {
     }
 
     private createPanelElement(): HTMLDivElement {
-        const panel = globalThis.globalThis.document.createElement("div");
+        const panel = globalThis.document.createElement("div");
         panel.className = "annotation-panel";
         panel.style.cssText = `
             width: 300px;

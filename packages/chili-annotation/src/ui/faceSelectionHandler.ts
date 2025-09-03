@@ -192,16 +192,83 @@ export class FaceSelectionHandler {
      * 设置事件监听器
      */
     private setupEventListeners(): void {
-        // 这里需要与chili3d的事件系统集成
-        // 暂时使用模拟的事件监听
-
         // 监听键盘事件
         globalThis.document.addEventListener("keydown", this.handleKeyDown.bind(this));
         globalThis.document.addEventListener("keyup", this.handleKeyUp.bind(this));
 
-        // 监听鼠标点击事件（这里需要与3D视图集成）
-        // 实际实现中需要从chili3d的视图系统获取面点击事件
+        // 添加3D视图的点击事件监听
+        this.setup3DViewListeners();
     }
+
+    /**
+     * 设置3D视图的事件监听
+     */
+    private setup3DViewListeners(): void {
+        // 查找3D视图的canvas元素
+        const canvas =
+            globalThis.document.querySelector("canvas") ||
+            globalThis.document.querySelector(".three-canvas") ||
+            globalThis.document.querySelector("#three-canvas");
+
+        if (canvas) {
+            console.log("✅ 找到3D视图canvas，设置面选择事件监听");
+
+            canvas.addEventListener("click", this.handle3DViewClick.bind(this));
+            canvas.addEventListener("mousemove", this.handle3DViewMouseMove.bind(this));
+
+            // 保存canvas引用
+            (this as any)._canvas = canvas;
+        } else {
+            console.warn("⚠️ 未找到3D视图canvas，面选择可能无法工作");
+            // 5秒后重试
+            setTimeout(() => this.setup3DViewListeners(), 5000);
+        }
+    }
+
+    /**
+     * 处理3D视图点击事件
+     */
+    private handle3DViewClick(event: MouseEvent): void {
+        if (!this._isActive) return;
+
+        console.log("🖱️ 检测到3D视图点击", { x: event.clientX, y: event.clientY });
+
+        // 模拟面选择 - 生成一个假的面ID用于测试
+        const faceId = Math.floor(Math.random() * 100) + 1;
+
+        // 创建面选择事件
+        const faceEvent = {
+            faceId: faceId,
+            ctrlKey: event.ctrlKey,
+            shiftKey: event.shiftKey,
+            altKey: event.altKey,
+        };
+
+        console.log("✅ 模拟选择面:", faceId);
+        this.handleFaceClick(faceEvent);
+    }
+
+    /**
+     * 处理3D视图鼠标移动事件
+     */
+    private handle3DViewMouseMove(event: MouseEvent): void {
+        if (!this._isActive) return;
+
+        // 模拟面悬停
+        const faceId = Math.floor(Math.random() * 100) + 1;
+
+        // 节流处理，避免过于频繁
+        if (!this._mouseMoveThrottle) {
+            this._mouseMoveThrottle = true;
+            setTimeout(() => {
+                this._mouseMoveThrottle = false;
+            }, 100);
+
+            this.handleFaceHover(faceId);
+        }
+    }
+
+    private _mouseMoveThrottle = false;
 
     /**
      * 处理单选
@@ -492,7 +559,14 @@ export class FaceSelectionHandler {
         this.deactivate();
         this.hideSelectionHint();
 
-        // 清理事件监听器
+        // 清理3D视图事件监听器
+        const canvas = (this as any)._canvas;
+        if (canvas) {
+            canvas.removeEventListener("click", this.handle3DViewClick.bind(this));
+            canvas.removeEventListener("mousemove", this.handle3DViewMouseMove.bind(this));
+        }
+
+        // 清理键盘事件监听器
         globalThis.document.removeEventListener("keydown", this.handleKeyDown.bind(this));
         globalThis.document.removeEventListener("keyup", this.handleKeyUp.bind(this));
 
