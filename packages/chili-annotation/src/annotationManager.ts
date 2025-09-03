@@ -330,21 +330,32 @@ export class AnnotationManager implements IDisposable {
      * 将选中面添加到活动标注
      */
     addSelectedFacesToActiveAnnotation(): boolean {
+        console.log("[AnnotationManager] addSelectedFacesToActiveAnnotation called");
+        console.log("Active annotation:", this._activeAnnotation?.annotation.name);
+        console.log("Selected faces size:", this._selectedFaces.size);
+        console.log("Selected face IDs:", Array.from(this._selectedFaces));
+
         if (!this._activeAnnotation || this._selectedFaces.size === 0) {
+            console.log("Early return: no active annotation or no selected faces");
             return false;
         }
 
         const faceIds = Array.from(this._selectedFaces);
+        console.log("Face IDs to add:", faceIds);
+        console.log("Current annotation faces before adding:", this._activeAnnotation.annotation.faces);
 
         // 验证面
         const validationResult = this._validator.validateFaces(this._activeAnnotation.annotation, faceIds);
+        console.log("Validation result:", validationResult);
         if (!validationResult.isValid) {
             console.warn("Face validation failed:", validationResult.errors);
             return false;
         }
 
         // 添加面
+        console.log("Adding faces to annotation...");
         this._activeAnnotation.addFaces(faceIds);
+        console.log("Faces after adding:", this._activeAnnotation.annotation.faces);
 
         // 记录历史
         this._history.record({
@@ -354,11 +365,14 @@ export class AnnotationManager implements IDisposable {
         });
 
         // 清空选择
+        console.log("Clearing selection...");
         this.clearSelection();
 
         // 触发事件
+        console.log("Triggering modification events...");
         this._onAnnotationModified.forEach((callback) => callback(this._activeAnnotation!));
 
+        console.log("addSelectedFacesToActiveAnnotation completed successfully");
         return true;
     }
 

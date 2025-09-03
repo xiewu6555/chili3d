@@ -342,13 +342,17 @@ export class AnnotationPanel {
         const annotationName = `${nameEN}_${Date.now()}`;
 
         try {
-            const annotation = this._manager.createAnnotation(featureType, annotationName);
-            console.log(`Created annotation: ${annotation.name}`);
+            const annotationNode = this._manager.createAnnotation(featureType, annotationName);
+
+            // 设置为活动标注
+            this._manager.setActiveAnnotation(annotationNode.annotation.id);
+
+            console.log(`Created annotation: ${annotationNode.annotation.name}`);
             this.updateAnnotationsList();
             this.updateActiveAnnotationDisplay();
 
             // 自动进入面选择模式
-            alert("标注已创建。现在进入面选择模式，请点击要标注的面。");
+            alert("标注已创建并设为活动标注。现在进入面选择模式，请点击要标注的面。");
             await this.onSelectFaces();
         } catch (error) {
             alert(`Failed to create annotation: ${error}`);
@@ -375,8 +379,27 @@ export class AnnotationPanel {
 
     private onAddSelectedFaces(): void {
         try {
+            // 调试：检查状态
+            console.log("Before adding faces:");
+            console.log("Active annotation:", this._manager.activeAnnotation?.annotation.name);
+            console.log("Selected faces count:", this._manager.selectedFaces.length);
+            console.log("Selected face IDs:", this._manager.selectedFaces);
+            console.log(
+                "Current annotation faces count:",
+                this._manager.activeAnnotation?.annotation.faces.length,
+            );
+
             // 使用 AnnotationManager 的方法来添加选中的面
             const success = this._manager.addSelectedFacesToActiveAnnotation();
+
+            console.log("Add faces result:", success);
+            if (this._manager.activeAnnotation) {
+                console.log(
+                    "After adding - annotation faces count:",
+                    this._manager.activeAnnotation.annotation.faces.length,
+                );
+                console.log("Face IDs in annotation:", this._manager.activeAnnotation.annotation.faces);
+            }
 
             if (!success) {
                 // 检查具体原因
@@ -394,11 +417,9 @@ export class AnnotationPanel {
                 return;
             }
 
-            // 清除选择
-            this._manager.clearSelection();
-
             // 更新显示
             this.updateActiveAnnotationDisplay();
+            this.updateAnnotationsList();
             this.updateSelectedFacesInfo();
 
             alert("成功添加选中的面到活动标注");

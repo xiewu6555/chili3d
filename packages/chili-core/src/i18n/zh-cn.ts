@@ -57,6 +57,8 @@ export default {
         "command.annotation.clear": "清除所有",
         "command.annotation.export.aagnet": "导出AAGNet",
         "command.annotation.export.mftrcad": "导出MFTRCAD",
+        "command.annotation.selectFace": "选择面",
+        "command.annotation.addSelectedFaces": "添加选中面",
         "annotation.start": "启动标注",
         "annotation.stop": "停止标注",
         "annotation.create": "创建标注",

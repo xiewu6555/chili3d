@@ -72,7 +72,9 @@ export class SelectFacesCommand implements ICommand {
                     });
 
                     // 更新标注管理器的选择状态
+                    console.log("Selecting faces in annotation manager:", faceIds);
                     annotationManager.selectFaces(faceIds);
+                    console.log("Selected faces after update:", annotationManager.selectedFaces);
 
                     // 更新面选择处理器（如果存在）
                     const faceSelectionHandler = (document as any)._faceSelectionHandler;

@@ -57,6 +57,8 @@ export default {
         "command.annotation.clear": "Clear All",
         "command.annotation.export.aagnet": "Export AAGNet",
         "command.annotation.export.mftrcad": "Export MFTRCAD",
+        "command.annotation.selectFace": "Select Faces",
+        "command.annotation.addSelectedFaces": "Add Selected Faces",
         "annotation.start": "Start Annotation",
         "annotation.stop": "Stop Annotation",
         "annotation.create": "Create Annotation",

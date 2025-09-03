@@ -114,6 +114,8 @@ const I18N_KEYS = [
     "command.annotation.clear",
     "command.annotation.export.aagnet",
     "command.annotation.export.mftrcad",
+    "command.annotation.selectFace",
+    "command.annotation.addSelectedFaces",
     "annotation.start",
     "annotation.stop",
     "annotation.create",
