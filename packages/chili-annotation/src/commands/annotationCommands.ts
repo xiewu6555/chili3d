@@ -41,6 +41,7 @@ export class StartAnnotationCommandRegistered implements ICommand {
 
             // 创建标注面板
             const annotationPanel = new AnnotationPanel(annotationManager, document);
+            (document as any)._annotationPanel = annotationPanel;
 
             // 将面板添加到DOM中 - 尝试多种容器选择方式
             let mainContainer =

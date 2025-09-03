@@ -1,7 +1,15 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { AsyncController, command, IApplication, ICommand, ShapeType, ISubFaceShape } from "chili-core";
+import {
+    AsyncController,
+    command,
+    IApplication,
+    ICommand,
+    ShapeType,
+    ISubFaceShape,
+    VisualState,
+} from "chili-core";
 
 /**
  * 面选择命令 - 使用chili3d的原生选择系统
@@ -45,11 +53,13 @@ export class SelectFacesCommand implements ICommand {
             console.log("ShapeType set to:", ShapeType.Face, "Current:", document.selection.shapeType);
 
             try {
-                // 执行面选择
+                // 执行面选择 - 使用视觉状态来高亮选中的面
                 const selectedFaces = await document.selection.pickShape(
                     "请选择要标注的面（按Esc取消）" as any,
                     controller,
-                    true, // multiMode - 允许选择多个面
+                    false, // 改为单选模式，需要按住Ctrl进行多选
+                    VisualState.faceColored, // 选中状态 - 面着色
+                    VisualState.faceTransparent, // 高亮状态 - 面透明
                 );
 
                 if (selectedFaces && selectedFaces.length > 0) {
@@ -77,8 +87,14 @@ export class SelectFacesCommand implements ICommand {
                         });
                     }
 
+                    // 更新面板显示 - 通过查找面板并调用更新方法
+                    const panel = (document as any)._annotationPanel;
+                    if (panel && panel.updateSelectedFacesInfo) {
+                        panel.updateSelectedFacesInfo();
+                    }
+
                     alert(
-                        `✅ 成功选择了 ${faceIds.length} 个面\n\n现在可以：\n1. 点击"添加选中面"将面添加到活动标注\n2. 继续选择更多面\n3. 按Esc完成选择`,
+                        `✅ 成功选择了 ${faceIds.length} 个面\n\n现在可以：\n1. 点击"添加选中面"将面添加到活动标注\n2. 按住Ctrl继续选择更多面\n3. 按Esc完成选择`,
                     );
                 } else {
                     console.log("❌ 未选择任何面");

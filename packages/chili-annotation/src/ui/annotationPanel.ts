@@ -186,6 +186,7 @@ export class AnnotationPanel {
         section.appendChild(this._selectedFacesInfo);
 
         this.updateActiveAnnotationDisplay();
+        this.updateSelectedFacesInfo();
         return section;
     }
 
@@ -302,8 +303,21 @@ export class AnnotationPanel {
     }
 
     private setupEventListeners(): void {
-        // 这里可以设置事件监听器，暂时留空
-        // 实际项目中需要监听AnnotationManager的事件
+        // 监听选择变更事件
+        this._manager.onSelectionChanged((selectedFaces) => {
+            this.updateSelectedFacesInfo();
+        });
+
+        // 监听标注创建事件
+        this._manager.onAnnotationCreated((annotation) => {
+            this.updateAnnotationsList();
+        });
+
+        // 监听标注删除事件
+        this._manager.onAnnotationDeleted((annotation) => {
+            this.updateAnnotationsList();
+            this.updateActiveAnnotationDisplay();
+        });
     }
 
     private onFeatureTypeChange(): void {
@@ -361,22 +375,33 @@ export class AnnotationPanel {
 
     private onAddSelectedFaces(): void {
         try {
-            // 这里需要实现添加选中面的逻辑
-            // 暂时使用模拟数据
-            const selectedFaces = (this._manager as any)._selectedFaces || [];
-            if (selectedFaces.length === 0) {
-                alert("No faces selected");
+            // 使用 AnnotationManager 的方法来添加选中的面
+            const success = this._manager.addSelectedFacesToActiveAnnotation();
+
+            if (!success) {
+                // 检查具体原因
+                if (!this._manager.activeAnnotation) {
+                    alert("请先创建或选择一个标注");
+                    return;
+                }
+
+                if (this._manager.selectedFaces.length === 0) {
+                    alert("请先选择要添加的面");
+                    return;
+                }
+
+                alert("添加面失败：验证未通过");
                 return;
             }
 
-            const activeAnnotation = this._manager.activeAnnotation;
-            if (!activeAnnotation) {
-                alert("No active annotation");
-                return;
-            }
+            // 清除选择
+            this._manager.clearSelection();
 
-            activeAnnotation.addFaces(selectedFaces);
+            // 更新显示
             this.updateActiveAnnotationDisplay();
+            this.updateSelectedFacesInfo();
+
+            alert("成功添加选中的面到活动标注");
         } catch (error) {
             alert(`Failed to add selected faces: ${error}`);
         }
@@ -474,17 +499,18 @@ export class AnnotationPanel {
             return;
         }
 
-        const nameEN = FEATURE_NAMES_EN[activeAnnotation.featureType];
-        const nameCN = FEATURE_NAMES_CN[activeAnnotation.featureType];
+        const annotation = activeAnnotation.annotation;
+        const nameEN = FEATURE_NAMES_EN[annotation.type];
+        const nameCN = FEATURE_NAMES_CN[annotation.type];
         this._activeAnnotationInfo.innerHTML = `
             <div style="margin-bottom: 4px;">
-                <strong>${activeAnnotation.name}</strong>
+                <strong>${annotation.name}</strong>
             </div>
             <div style="font-size: 12px; color: #666; margin-bottom: 4px;">
                 Type: ${nameEN} (${nameCN})
             </div>
             <div style="font-size: 12px; color: #666;">
-                Faces: ${activeAnnotation.faces.length}
+                Faces: ${annotation.faces.length}
             </div>
         `;
     }
@@ -492,9 +518,10 @@ export class AnnotationPanel {
     private updateAnnotationsList(): void {
         if (!this._annotationsList) return;
 
-        const annotations = (this._manager as any).annotations || [];
+        // 获取所有标注节点
+        const annotationNodes = this._manager.annotations;
 
-        if (annotations.length === 0) {
+        if (annotationNodes.length === 0) {
             this._annotationsList.innerHTML = `
                 <div style="color: #666; font-style: italic; text-align: center; padding: 20px;">
                     No annotations created yet
@@ -505,9 +532,10 @@ export class AnnotationPanel {
 
         this._annotationsList.innerHTML = "";
 
-        annotations.forEach((annotation: any) => {
-            const nameEN = FEATURE_NAMES_EN[annotation.featureType as MachiningFeatureType];
-            const isActive = this._manager.activeAnnotation?.id === annotation.id;
+        annotationNodes.forEach((node: AnnotationNode) => {
+            const annotation = node.annotation;
+            const nameEN = FEATURE_NAMES_EN[annotation.type];
+            const isActive = this._manager.activeAnnotation?.annotation.id === annotation.id;
 
             const item = globalThis.document.createElement("div");
             item.style.cssText = `
@@ -519,9 +547,10 @@ export class AnnotationPanel {
                 cursor: pointer;
             `;
             item.onclick = () => {
-                (this._manager as any).activeAnnotation = annotation;
+                this._manager.setActiveAnnotation(annotation.id);
                 this.updateActiveAnnotationDisplay();
                 this.updateAnnotationsList();
+                this.updateSelectedFacesInfo();
             };
 
             item.innerHTML = `
@@ -536,6 +565,29 @@ export class AnnotationPanel {
 
             this._annotationsList!.appendChild(item);
         });
+    }
+
+    private updateSelectedFacesInfo(): void {
+        if (!this._selectedFacesInfo) return;
+
+        const selectedFaces = this._manager.selectedFaces;
+
+        if (selectedFaces.length === 0) {
+            this._selectedFacesInfo.innerHTML = `
+                <div style="color: #999; font-size: 12px; font-style: italic;">
+                    No faces selected
+                </div>
+            `;
+        } else {
+            this._selectedFacesInfo.innerHTML = `
+                <div style="color: #333; font-size: 12px;">
+                    <strong>Selected faces:</strong> ${selectedFaces.length}
+                </div>
+                <div style="color: #666; font-size: 11px; margin-top: 4px;">
+                    Face IDs: ${selectedFaces.join(", ")}
+                </div>
+            `;
+        }
     }
 
     /**
