@@ -1,0 +1,12 @@
+{
+    "name": "chili-annotation",
+    "version": "0.6.0",
+    "description": "BREP model annotation tools for machining feature recognition",
+    "main": "src/index.ts",
+    "devDependencies": {
+        "chili-core": "*",
+        "chili-builder": "*",
+        "chili-wasm": "*",
+        "chili-three": "*"
+    }
+}

@@ -1,8 +1,11 @@
 node_modules
 build
 dist
+docs
 coverage
 .VSCodeCounter
 .DS_Store
 .clang-format
 CMakeUserPresets.json
+.vscode
+CLAUDE.md

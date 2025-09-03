@@ -130,4 +130,21 @@ export const DefaultRibbon: RibbonTab[] = [
             },
         ],
     },
+    {
+        tabName: "ribbon.tab.annotation",
+        groups: [
+            {
+                groupName: "ribbon.group.annotation.main",
+                items: ["annotation.start", "annotation.stop", "annotation.create", "annotation.delete"],
+            },
+            {
+                groupName: "ribbon.group.annotation.validate",
+                items: ["annotation.validate", "annotation.clear"],
+            },
+            {
+                groupName: "ribbon.group.annotation.export",
+                items: ["annotation.export.aagnet", "annotation.export.mftrcad"],
+            },
+        ],
+    },
 ];

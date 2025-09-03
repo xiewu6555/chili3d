@@ -5,6 +5,11 @@ import { AppBuilder } from "chili-builder";
 import { Logger } from "chili-core";
 import { Loading } from "./loading";
 
+// 导入标注系统
+import { AnnotationModule } from "../../chili-annotation/src/annotationModule";
+// 导入标注命令来注册装饰器
+import "../../chili-annotation/src/commands/annotationCommands";
+
 let loading = new Loading();
 document.body.appendChild(loading);
 
@@ -14,6 +19,7 @@ new AppBuilder()
     .useWasmOcc()
     .useThree()
     .useUI()
+    .addAdditionalModules(new AnnotationModule())
     .build()
     .then(x => {
         document.body.removeChild(loading)
