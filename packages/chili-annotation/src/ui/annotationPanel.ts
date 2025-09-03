@@ -5,12 +5,14 @@ import { IDocument } from "chili-core";
 import { AnnotationManager } from "../annotationManager";
 import { MachiningFeatureType, FEATURE_NAMES_EN, FEATURE_NAMES_CN } from "../featureTypes";
 import { AnnotationNode } from "../annotationNode";
+import { SelectFacesCommand } from "../commands/selectFacesCommand";
 
 /**
  * 标注面板 - 主要的标注界面
  */
 export class AnnotationPanel {
     private _manager: AnnotationManager;
+    private _document: IDocument;
     private _element: HTMLDivElement;
     private _featureTypeSelect: HTMLSelectElement | undefined;
     private _activeAnnotationInfo: HTMLDivElement | undefined;
@@ -19,6 +21,7 @@ export class AnnotationPanel {
 
     constructor(manager: AnnotationManager, document: IDocument) {
         this._manager = manager;
+        this._document = document;
         this._element = this.createPanelElement();
 
         // 监听管理器事件
@@ -194,7 +197,12 @@ export class AnnotationPanel {
         `;
 
         const buttons = [
-            { text: "Create New Annotation", color: "#007acc", action: () => this.onCreateNewAnnotation() },
+            {
+                text: "Create New Annotation",
+                color: "#007acc",
+                action: async () => await this.onCreateNewAnnotation(),
+            },
+            { text: "Select Faces", color: "#6f42c1", action: async () => await this.onSelectFaces() },
             { text: "Add Selected Faces", color: "#28a745", action: () => this.onAddSelectedFaces() },
             {
                 text: "Confirm Annotation",
@@ -309,7 +317,7 @@ export class AnnotationPanel {
         }
     }
 
-    private onCreateNewAnnotation(): void {
+    private async onCreateNewAnnotation(): Promise<void> {
         if (!this._featureTypeSelect || !this._featureTypeSelect.value) {
             alert("Please select a feature type first.");
             return;
@@ -324,8 +332,30 @@ export class AnnotationPanel {
             console.log(`Created annotation: ${annotation.name}`);
             this.updateAnnotationsList();
             this.updateActiveAnnotationDisplay();
+
+            // 自动进入面选择模式
+            alert("标注已创建。现在进入面选择模式，请点击要标注的面。");
+            await this.onSelectFaces();
         } catch (error) {
             alert(`Failed to create annotation: ${error}`);
+        }
+    }
+
+    private async onSelectFaces(): Promise<void> {
+        try {
+            // 获取应用实例 - 从document中获取
+            const application = this._document.application;
+            if (!application) {
+                alert("应用实例未找到");
+                return;
+            }
+
+            // 创建并执行选择面命令
+            const selectFacesCommand = new SelectFacesCommand();
+            await selectFacesCommand.execute(application);
+        } catch (error) {
+            console.error("Face selection failed:", error);
+            alert(`Face selection failed: ${error}`);
         }
     }
 

@@ -22,6 +22,7 @@ export * from "./ui/faceSelectionHandler";
 // Commands
 export * from "./commands/annotationCommand";
 export * from "./commands/annotationCommands";
+export * from "./commands/selectFacesCommand";
 
 // Module integration
 export * from "./annotationModule";
