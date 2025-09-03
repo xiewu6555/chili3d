@@ -45,19 +45,43 @@ export class SelectFacesCommand implements ICommand {
             document.selection.shapeFilter = undefined;
             document.selection.nodeFilter = undefined;
 
+            // 确保多选模式启用 - 检查是否有multiSelect属性
+            console.log("🔧 Selection configuration:");
+            console.log("  - shapeType:", document.selection.shapeType);
+            console.log("  - shapeFilter:", document.selection.shapeFilter);
+            console.log("  - nodeFilter:", document.selection.nodeFilter);
+
+            // 尝试设置多选模式（如果属性存在）
+            if ("multiSelect" in document.selection) {
+                (document.selection as any).multiSelect = true;
+                console.log("  - multiSelect enabled:", (document.selection as any).multiSelect);
+            }
+
             // 清除当前选择
             document.selection.clearSelection();
             document.visual.highlighter.clear();
+
+            // 也清除标注管理器中的选择，确保状态同步
+            annotationManager.clearSelection();
+            console.log("Cleared all selections - document and annotation manager");
 
             console.log("Starting face selection...");
             console.log("ShapeType set to:", ShapeType.Face, "Current:", document.selection.shapeType);
 
             try {
+                console.log("🎯 Starting pickShape with multiMode=true");
+                console.log("📋 pickShape parameters:");
+                console.log("  - prompt:", "请选择要标注的面（按Ctrl+点击多选，按Esc完成）");
+                console.log("  - controller:", controller);
+                console.log("  - multiMode:", true);
+                console.log("  - selectedState:", VisualState.faceColored);
+                console.log("  - highlightState:", VisualState.faceTransparent);
+
                 // 执行面选择 - 使用视觉状态来高亮选中的面
                 const selectedFaces = await document.selection.pickShape(
-                    "请选择要标注的面（按Esc取消）" as any,
+                    "请选择要标注的面（直接点击多个面，按Esc完成选择）" as any,
                     controller,
-                    false, // 改为单选模式，需要按住Ctrl进行多选
+                    true, // 启用多选模式 - 用户可以直接点击多个面
                     VisualState.faceColored, // 选中状态 - 面着色
                     VisualState.faceTransparent, // 高亮状态 - 面透明
                 );
@@ -72,28 +96,29 @@ export class SelectFacesCommand implements ICommand {
                     });
 
                     // 更新标注管理器的选择状态
-                    console.log("Selecting faces in annotation manager:", faceIds);
+                    console.log("🔄 Selecting faces in annotation manager:", faceIds);
                     annotationManager.selectFaces(faceIds);
-                    console.log("Selected faces after update:", annotationManager.selectedFaces);
+                    console.log("✅ Selected faces after update:", annotationManager.selectedFaces);
+                    console.log("📊 Manager selectedFaces count:", annotationManager.selectedFaces.length);
 
-                    // 更新面选择处理器（如果存在）
-                    const faceSelectionHandler = (document as any)._faceSelectionHandler;
-                    if (faceSelectionHandler) {
-                        faceIds.forEach((faceId) => {
-                            faceSelectionHandler.handleFaceClick({
-                                faceId: faceId,
-                                ctrlKey: false,
-                                shiftKey: false,
-                                altKey: false,
-                            });
-                        });
-                    }
+                    // 验证状态是否正确设置
+                    setTimeout(() => {
+                        console.log(
+                            "🔍 Delayed check - Manager selectedFaces:",
+                            annotationManager.selectedFaces,
+                        );
 
-                    // 更新面板显示 - 通过查找面板并调用更新方法
-                    const panel = (document as any)._annotationPanel;
-                    if (panel && panel.updateSelectedFacesInfo) {
-                        panel.updateSelectedFacesInfo();
-                    }
+                        // 更新面板显示
+                        const panel = (document as any)._annotationPanel;
+                        if (panel) {
+                            console.log("🎛️ Found panel, updating selected faces info");
+                            if (panel.updateSelectedFacesInfo) {
+                                panel.updateSelectedFacesInfo();
+                            }
+                        } else {
+                            console.warn("⚠️ Panel not found in document");
+                        }
+                    }, 100);
 
                     alert(
                         `✅ 成功选择了 ${faceIds.length} 个面\n\n现在可以：\n1. 点击"添加选中面"将面添加到活动标注\n2. 按住Ctrl继续选择更多面\n3. 按Esc完成选择`,

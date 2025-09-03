@@ -303,21 +303,38 @@ export class AnnotationPanel {
     }
 
     private setupEventListeners(): void {
+        console.log("🎧 [EVENT SETUP] Setting up event listeners");
+
         // 监听选择变更事件
         this._manager.onSelectionChanged((selectedFaces) => {
+            console.log(
+                `🎯 [EVENT] onSelectionChanged triggered with ${selectedFaces.length} faces:`,
+                selectedFaces,
+            );
             this.updateSelectedFacesInfo();
         });
 
         // 监听标注创建事件
         this._manager.onAnnotationCreated((annotation) => {
+            console.log(`📝 [EVENT] onAnnotationCreated triggered for:`, annotation.annotation.name);
             this.updateAnnotationsList();
         });
 
         // 监听标注删除事件
         this._manager.onAnnotationDeleted((annotation) => {
+            console.log(`🗑️ [EVENT] onAnnotationDeleted triggered for:`, annotation.annotation.name);
             this.updateAnnotationsList();
             this.updateActiveAnnotationDisplay();
         });
+
+        // 监听标注修改事件
+        this._manager.onAnnotationModified((annotation) => {
+            console.log(`✏️ [EVENT] onAnnotationModified triggered for:`, annotation.annotation.name);
+            this.updateAnnotationsList();
+            this.updateActiveAnnotationDisplay();
+        });
+
+        console.log("✅ [EVENT SETUP] All event listeners configured");
     }
 
     private onFeatureTypeChange(): void {
@@ -350,10 +367,11 @@ export class AnnotationPanel {
             console.log(`Created annotation: ${annotationNode.annotation.name}`);
             this.updateAnnotationsList();
             this.updateActiveAnnotationDisplay();
+            this.updateSelectedFacesInfo(); // 确保选中面信息正确显示
 
-            // 自动进入面选择模式
-            alert("标注已创建并设为活动标注。现在进入面选择模式，请点击要标注的面。");
-            await this.onSelectFaces();
+            alert(
+                `✅ 标注 "${annotationName}" 已创建并设为活动标注。\n\n现在可以：\n1. 点击"Select Faces"进入面选择模式\n2. 直接点击3D模型上的多个面\n3. 按Esc键完成选择\n4. 点击"Add Selected Faces"添加到标注`,
+            );
         } catch (error) {
             alert(`Failed to create annotation: ${error}`);
         }
@@ -378,53 +396,63 @@ export class AnnotationPanel {
     }
 
     private onAddSelectedFaces(): void {
-        try {
-            // 调试：检查状态
-            console.log("Before adding faces:");
-            console.log("Active annotation:", this._manager.activeAnnotation?.annotation.name);
-            console.log("Selected faces count:", this._manager.selectedFaces.length);
-            console.log("Selected face IDs:", this._manager.selectedFaces);
-            console.log(
-                "Current annotation faces count:",
-                this._manager.activeAnnotation?.annotation.faces.length,
-            );
+        console.log("🔧 [ADD FACES] Starting Add Selected Faces operation");
 
-            // 使用 AnnotationManager 的方法来添加选中的面
+        // 详细状态检查
+        const activeAnnotation = this._manager.activeAnnotation;
+        const selectedFaces = this._manager.selectedFaces;
+
+        console.log("📋 Current state:");
+        console.log("  - Active annotation:", activeAnnotation?.annotation.name);
+        console.log("  - Selected faces count:", selectedFaces.length);
+        console.log("  - Selected face IDs:", selectedFaces);
+
+        // 前置条件检查
+        if (!activeAnnotation) {
+            console.warn("❌ No active annotation");
+            alert(
+                "❌ 请先创建或选择一个标注\n\n操作步骤：\n1. 点击 'Create New Annotation' 创建标注\n2. 或在标注列表中点击现有标注激活它",
+            );
+            return;
+        }
+
+        if (selectedFaces.length === 0) {
+            console.warn("❌ No faces selected");
+            alert(
+                "❌ 请先选择要添加的面\n\n操作步骤：\n1. 点击 'Select Faces' 按钮\n2. 在3D视图中直接点击多个面\n3. 按Esc键完成选择\n4. 再点击此按钮添加面到标注",
+            );
+            return;
+        }
+
+        console.log(
+            `📊 Current annotation "${activeAnnotation.annotation.name}" has ${activeAnnotation.annotation.faces.length} faces`,
+        );
+
+        try {
+            // 执行添加操作
             const success = this._manager.addSelectedFacesToActiveAnnotation();
 
-            console.log("Add faces result:", success);
-            if (this._manager.activeAnnotation) {
+            if (success) {
+                const finalFaceCount = activeAnnotation.annotation.faces.length;
                 console.log(
-                    "After adding - annotation faces count:",
-                    this._manager.activeAnnotation.annotation.faces.length,
+                    `✅ Successfully added ${selectedFaces.length} faces. Total faces now: ${finalFaceCount}`,
                 );
-                console.log("Face IDs in annotation:", this._manager.activeAnnotation.annotation.faces);
+
+                // 更新UI显示
+                this.updateActiveAnnotationDisplay();
+                this.updateAnnotationsList();
+                this.updateSelectedFacesInfo();
+
+                alert(
+                    `✅ 成功添加 ${selectedFaces.length} 个面到标注 "${activeAnnotation.annotation.name}"\n\n标注现在包含 ${finalFaceCount} 个面`,
+                );
+            } else {
+                console.error("❌ Add operation failed");
+                alert("❌ 添加面失败：验证未通过");
             }
-
-            if (!success) {
-                // 检查具体原因
-                if (!this._manager.activeAnnotation) {
-                    alert("请先创建或选择一个标注");
-                    return;
-                }
-
-                if (this._manager.selectedFaces.length === 0) {
-                    alert("请先选择要添加的面");
-                    return;
-                }
-
-                alert("添加面失败：验证未通过");
-                return;
-            }
-
-            // 更新显示
-            this.updateActiveAnnotationDisplay();
-            this.updateAnnotationsList();
-            this.updateSelectedFacesInfo();
-
-            alert("成功添加选中的面到活动标注");
         } catch (error) {
-            alert(`Failed to add selected faces: ${error}`);
+            console.error("❌ Exception during add operation:", error);
+            alert(`❌ 添加面时发生错误: ${error}`);
         }
     }
 
@@ -589,9 +617,15 @@ export class AnnotationPanel {
     }
 
     private updateSelectedFacesInfo(): void {
-        if (!this._selectedFacesInfo) return;
+        console.log("🔄 [PANEL UPDATE] updateSelectedFacesInfo called");
+
+        if (!this._selectedFacesInfo) {
+            console.warn("⚠️ _selectedFacesInfo element not found");
+            return;
+        }
 
         const selectedFaces = this._manager.selectedFaces;
+        console.log(`📊 Panel updating with ${selectedFaces.length} selected faces:`, selectedFaces);
 
         if (selectedFaces.length === 0) {
             this._selectedFacesInfo.innerHTML = `
@@ -599,15 +633,17 @@ export class AnnotationPanel {
                     No faces selected
                 </div>
             `;
+            console.log("📋 Panel display: No faces selected");
         } else {
             this._selectedFacesInfo.innerHTML = `
-                <div style="color: #333; font-size: 12px;">
-                    <strong>Selected faces:</strong> ${selectedFaces.length}
+                <div style="color: #333; font-size: 12px; background: #e8f5e8; padding: 4px; border-radius: 3px;">
+                    <strong>✅ Selected faces:</strong> ${selectedFaces.length}
                 </div>
-                <div style="color: #666; font-size: 11px; margin-top: 4px;">
+                <div style="color: #666; font-size: 11px; margin-top: 4px; background: #f8f8f8; padding: 3px; border-radius: 3px;">
                     Face IDs: ${selectedFaces.join(", ")}
                 </div>
             `;
+            console.log(`📋 Panel display: ${selectedFaces.length} faces - ${selectedFaces.join(", ")}`);
         }
     }
 
