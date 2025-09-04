@@ -233,9 +233,23 @@ export class GeometryState {
             bufferGeometry.setIndex(Array.from(faceData.index));
 
             const mesh = new Mesh(bufferGeometry, faceColoredMaterial);
+            // 设置渲染层级以确保高亮显示在原始模型之上
+            mesh.renderOrder = 999;
+            mesh.frustumCulled = false;
+
             this.highlighter.container.add(mesh);
             mesh.applyMatrix4(this.visual.matrixWorld);
+
             console.log(`🏗️ [DEBUG] Created face mesh and added to highlighter container`);
+            console.log(`🏗️ [DEBUG] Mesh properties:`, {
+                visible: mesh.visible,
+                renderOrder: mesh.renderOrder,
+                material: mesh.material,
+                materialColor: (mesh.material as any).color?.getHex(),
+                materialOpacity: (mesh.material as any).opacity,
+                position: mesh.position,
+                parent: mesh.parent?.name,
+            });
             return mesh;
         }
 
@@ -294,6 +308,16 @@ export class ThreeHighlighter implements IHighlighter {
     }
 
     addState(geometry: ThreeVisualObject, state: VisualState, type: ShapeType, ...index: number[]) {
+        console.log(
+            `🔥 [HIGHLIGHTER] addState called - geometry: ${geometry.constructor.name}, state: ${state}, type: ${type}, indices: [${index.join(", ")}]`,
+        );
+        console.log(
+            `🔥 [HIGHLIGHTER] State breakdown - faceColored: ${VisualState.faceColored}, hasState(faceColored): ${VisualState.hasState(state, VisualState.faceColored)}`,
+        );
+        console.log(
+            `🔥 [HIGHLIGHTER] Type breakdown - Face: ${ShapeType.Face}, hasFace: ${ShapeType.hasFace(type)}`,
+        );
+
         let geometryState = this.getOrInitState(geometry);
         geometryState.addState(state, type, index);
     }

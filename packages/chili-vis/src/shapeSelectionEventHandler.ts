@@ -19,7 +19,7 @@ export abstract class ShapeSelectionHandler extends SelectionHandler {
     private _detectAtMouse: VisualShapeData[] | undefined;
     private _lockDetected: IShape | undefined;
 
-    highlightState = VisualState.edgeHighlight
+    highlightState = VisualState.edgeHighlight;
 
     constructor(
         document: IDocument,
@@ -48,7 +48,13 @@ export abstract class ShapeSelectionHandler extends SelectionHandler {
                 this.nodeFilter,
             );
         }
-        this._detectAtMouse = view.detectShapes(this.shapeType, event.offsetX, event.offsetY, this.shapefilter, this.nodeFilter);
+        this._detectAtMouse = view.detectShapes(
+            this.shapeType,
+            event.offsetX,
+            event.offsetY,
+            this.shapefilter,
+            this.nodeFilter,
+        );
         const detected = this.getDetecting();
         return detected ? [detected] : [];
     }
@@ -64,7 +70,7 @@ export abstract class ShapeSelectionHandler extends SelectionHandler {
             view.document.visual.highlighter.addState(
                 x.owner,
                 this.highlightState,
-                this.shapeType,
+                x.shape.shapeType,
                 ...x.indexes,
             );
         });
@@ -77,7 +83,7 @@ export abstract class ShapeSelectionHandler extends SelectionHandler {
             x.owner.node.document.visual.highlighter.removeState(
                 x.owner,
                 this.highlightState,
-                this.shapeType,
+                x.shape.shapeType,
                 ...x.indexes,
             );
         });
@@ -159,12 +165,24 @@ export class SubshapeSelectionHandler extends ShapeSelectionHandler {
     }
 
     private addSelected(shape: VisualShapeData) {
+        console.log(
+            `🔥 [HANDLER] addSelected called - selectedState: ${this.selectedState}, shapeType: ${shape.shape.shapeType}, indexes: [${shape.indexes.join(", ")}]`,
+        );
+        console.log(
+            `🔥 [HANDLER] Shape type check - Face: ${ShapeType.Face}, hasFace: ${ShapeType.hasFace(shape.shape.shapeType)}`,
+        );
+        console.log(
+            `🔥 [HANDLER] Selected state check - faceColored: ${VisualState.faceColored}, is faceColored: ${this.selectedState === VisualState.faceColored}`,
+        );
+
         shape.owner.node.document.visual.highlighter.addState(
             shape.owner,
             this.selectedState,
-            this.shapeType,
+            shape.shape.shapeType,
             ...shape.indexes,
         );
         this._shapes.set(shape.shape, shape);
+
+        console.log(`🔥 [HANDLER] addSelected completed`);
     }
 }

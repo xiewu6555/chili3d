@@ -62,4 +62,13 @@ export const faceTransparentMaterial = new MeshLambertMaterial({
 export const faceColoredMaterial = new MeshLambertMaterial({
     side: DoubleSide,
     color: ThreeHelper.fromColor(VisualConfig.highlightFaceColor),
+    emissive: ThreeHelper.fromColor(VisualConfig.highlightFaceColor),
+    emissiveIntensity: 0.5,
+    transparent: true,
+    opacity: 0.8,
+    depthTest: true,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
 });

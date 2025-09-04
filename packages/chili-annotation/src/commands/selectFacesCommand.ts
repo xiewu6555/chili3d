@@ -101,7 +101,7 @@ export class SelectFacesCommand implements ICommand {
                     console.log("✅ Selected faces after update:", annotationManager.selectedFaces);
                     console.log("📊 Manager selectedFaces count:", annotationManager.selectedFaces.length);
 
-                    // 手动添加选中面的持续高亮
+                    // 先清除pickShape过程中的临时高亮，然后添加持续高亮
                     console.log("🎨 Adding persistent highlight for selected faces");
                     selectedFaces.forEach((shapeData, index) => {
                         const visual = shapeData.owner; // 使用正确的 owner 属性
@@ -111,13 +111,36 @@ export class SelectFacesCommand implements ICommand {
                             visual.constructor.name,
                         );
 
+                        // 首先移除可能存在的其他状态
+                        console.log(`🎨 Removing any existing states for face ${faceIndex}`);
+                        document.visual.highlighter.removeState(
+                            visual,
+                            VisualState.faceTransparent,
+                            ShapeType.Face,
+                            faceIndex,
+                        );
+                        document.visual.highlighter.removeState(
+                            visual,
+                            VisualState.edgeSelected,
+                            ShapeType.Face,
+                            faceIndex,
+                        );
+
                         // 添加面着色高亮状态 (VisualState.faceColored = 8)
+                        console.log(
+                            `🎨 Adding faceColored state: ${VisualState.faceColored} to face ${faceIndex}`,
+                        );
+                        console.log(`🎨 Visual object:`, visual);
+                        console.log(`🎨 ShapeType.Face value:`, ShapeType.Face);
+
                         document.visual.highlighter.addState(
                             visual,
                             VisualState.faceColored,
                             ShapeType.Face,
                             faceIndex,
                         );
+
+                        console.log(`🎨 addState call completed for face ${faceIndex}`);
                     });
 
                     // 验证状态是否正确设置
