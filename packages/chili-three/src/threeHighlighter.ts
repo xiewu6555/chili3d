@@ -3,7 +3,7 @@
 
 import { IDisposable, IHighlighter, ShapeMeshData, ShapeType, VisualState } from "chili-core";
 import { MeshUtils } from "chili-geo";
-import { Group, Mesh, Points } from "three";
+import { BufferAttribute, BufferGeometry, Group, Mesh, Points } from "three";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry";
 import {
@@ -19,7 +19,7 @@ import { ThreeMeshObject, ThreeVisualObject } from "./threeVisualObject";
 import { IHighlightable } from "./highlightable";
 
 export class GeometryState {
-    private readonly _states: Map<string, [VisualState, LineSegments2 | undefined]> = new Map();
+    private readonly _states: Map<string, [VisualState, LineSegments2 | Mesh | undefined]> = new Map();
 
     constructor(
         readonly highlighter: ThreeHighlighter,
@@ -54,21 +54,31 @@ export class GeometryState {
     private setWholeState(method: "add" | "remove", state: VisualState, type: ShapeType) {
         const key = this.state_key(type);
         let [_oldState, newState] = this.updateStates(key, method, state);
+        console.log(
+            `🎨 [DEBUG] setWholeState - method: ${method}, state: ${state}, type: ${type}, newState: ${newState}`,
+        );
+
         if (this.visual instanceof ThreeGeometry) {
             if (newState === VisualState.normal) {
+                console.log(`🎨 [DEBUG] Removing temporary material`);
                 this.visual.removeTemperaryMaterial();
             } else if (VisualState.hasState(newState, VisualState.edgeHighlight)) {
+                console.log(`🎨 [DEBUG] Setting edge highlight material`);
                 this.visual.setEdgesMateiralTemperary(hilightEdgeMaterial);
             } else if (VisualState.hasState(newState, VisualState.edgeSelected)) {
+                console.log(`🎨 [DEBUG] Setting edge selected material`);
                 this.visual.setEdgesMateiralTemperary(selectedEdgeMaterial);
             } else if (VisualState.hasState(newState, VisualState.faceTransparent)) {
+                console.log(`🎨 [DEBUG] Setting face transparent material`);
                 this.visual.removeTemperaryMaterial();
                 this.visual.setFacesMateiralTemperary(faceTransparentMaterial);
             } else if (VisualState.hasState(newState, VisualState.faceColored)) {
+                console.log(`🎨 [DEBUG] Setting face colored material - this should show filled faces`);
                 this.visual.removeTemperaryMaterial();
                 this.visual.setFacesMateiralTemperary(faceColoredMaterial);
             }
         } else if (IHighlightable.is(this.visual)) {
+            console.log(`🎨 [DEBUG] Using IHighlightable interface`);
             if (newState !== VisualState.normal) {
                 this.visual.highlight();
             } else {
@@ -115,14 +125,22 @@ export class GeometryState {
         type: ShapeType,
         index: number[],
     ) {
+        console.log(
+            `🎯 [DEBUG] setSubGeometryState - method: ${method}, state: ${state}, type: ${type}, indices: [${index.join(", ")}]`,
+        );
+
         const shouldRemoved: string[] = [];
         index.forEach((i) => {
             const key = this.state_key(type, i);
             const [oldState, newState] = this.updateStates(key, method, state);
+            console.log(
+                `🎯 [DEBUG] Processing index ${i}, key: ${key}, oldState: ${oldState}, newState: ${newState}`,
+            );
+
             if (oldState !== undefined && newState === VisualState.normal) {
                 shouldRemoved.push(key);
             } else {
-                this.addSubEdgeState(type, key, i, newState);
+                this.addSubGeometryState(type, key, i, newState);
             }
         });
 
@@ -136,42 +154,111 @@ export class GeometryState {
         });
     }
 
-    private addSubEdgeState(type: ShapeType, key: string, i: number, newState: VisualState) {
+    private addSubGeometryState(type: ShapeType, key: string, i: number, newState: VisualState) {
+        console.log(
+            `🔧 [DEBUG] addSubGeometryState - type: ${type}, key: ${key}, index: ${i}, newState: ${newState}`,
+        );
+
         const geometry = this.getOrCloneGeometry(type, key, i);
+        console.log(`🔧 [DEBUG] Got geometry:`, geometry ? geometry.constructor.name : "null");
+
         if (geometry && "material" in geometry) {
-            let material = VisualState.hasState(newState, VisualState.edgeHighlight)
-                ? hilightEdgeMaterial
-                : selectedEdgeMaterial;
+            let material: any;
+            if (ShapeType.hasFace(type) || ShapeType.hasShell(type)) {
+                // 面类型使用面材质 - 优先使用填充材质
+                if (VisualState.hasState(newState, VisualState.faceColored)) {
+                    material = faceColoredMaterial;
+                } else if (VisualState.hasState(newState, VisualState.faceTransparent)) {
+                    material = faceTransparentMaterial;
+                } else {
+                    // 默认使用填充材质
+                    material = faceColoredMaterial;
+                }
+                console.log(
+                    `🔧 [DEBUG] Face type - using material:`,
+                    material === faceColoredMaterial ? "faceColoredMaterial" : "faceTransparentMaterial",
+                );
+            } else {
+                // 边类型使用边材质
+                material = VisualState.hasState(newState, VisualState.edgeHighlight)
+                    ? hilightEdgeMaterial
+                    : selectedEdgeMaterial;
+                console.log(
+                    `🔧 [DEBUG] Edge type - using material:`,
+                    material === hilightEdgeMaterial ? "hilightEdgeMaterial" : "selectedEdgeMaterial",
+                );
+            }
             geometry.material = material;
             this._states.set(key, [newState, geometry]);
+            console.log(`🔧 [DEBUG] Material applied successfully`);
+        } else {
+            console.warn(`🔧 [DEBUG] Failed to get geometry or geometry has no material property`);
         }
     }
 
     private getOrCloneGeometry(type: ShapeType, key: string, index: number) {
-        if (!(this.visual instanceof ThreeGeometry)) return undefined;
+        console.log(`🏗️ [DEBUG] getOrCloneGeometry - type: ${type}, key: ${key}, index: ${index}`);
 
-        const geometry = this._states.get(key)?.[1];
-        if (geometry) return geometry;
-
-        let points: Float32Array | undefined = undefined;
-        if (ShapeType.hasFace(type) || ShapeType.hasShell(type)) {
-            points = MeshUtils.subFaceOutlines(this.visual.geometryNode.mesh.faces!, index);
-        }
-        if (points === undefined && (ShapeType.hasEdge(type) || ShapeType.hasWire(type))) {
-            points = MeshUtils.subEdge(this.visual.geometryNode.mesh.edges!, index);
-        }
-
-        if (!points) {
-            console.warn(`Invalid type ${type} for ${key}`);
+        if (!(this.visual instanceof ThreeGeometry)) {
+            console.warn(`🏗️ [DEBUG] Visual is not ThreeGeometry:`, this.visual.constructor.name);
             return undefined;
         }
 
-        const lineGeometry = new LineSegmentsGeometry();
-        lineGeometry.setPositions(points);
-        const segment = new LineSegments2(lineGeometry);
-        this.highlighter.container.add(segment);
-        segment.applyMatrix4(this.visual.matrixWorld);
-        return segment;
+        const geometry = this._states.get(key)?.[1];
+        if (geometry) {
+            console.log(`🏗️ [DEBUG] Returning existing geometry`);
+            return geometry;
+        }
+
+        // 对于面类型，创建填充的Mesh几何体
+        if (ShapeType.hasFace(type) || ShapeType.hasShell(type)) {
+            console.log(`🏗️ [DEBUG] Processing face type`);
+            const faceData = MeshUtils.subFace(this.visual.geometryNode.mesh.faces!, index);
+            if (!faceData) {
+                console.warn(`🏗️ [DEBUG] Invalid face ${index} for ${key}`);
+                return undefined;
+            }
+
+            console.log(`🏗️ [DEBUG] Face data:`, {
+                positionLength: faceData.position.length,
+                normalLength: faceData.normal.length,
+                uvLength: faceData.uv.length,
+                indexLength: faceData.index.length,
+            });
+
+            const bufferGeometry = new BufferGeometry();
+            bufferGeometry.setAttribute("position", new BufferAttribute(faceData.position, 3));
+            bufferGeometry.setAttribute("normal", new BufferAttribute(faceData.normal, 3));
+            bufferGeometry.setAttribute("uv", new BufferAttribute(faceData.uv, 2));
+            bufferGeometry.setIndex(Array.from(faceData.index));
+
+            const mesh = new Mesh(bufferGeometry, faceColoredMaterial);
+            this.highlighter.container.add(mesh);
+            mesh.applyMatrix4(this.visual.matrixWorld);
+            console.log(`🏗️ [DEBUG] Created face mesh and added to highlighter container`);
+            return mesh;
+        }
+
+        // 对于边类型，保持原来的线框实现
+        if (ShapeType.hasEdge(type) || ShapeType.hasWire(type)) {
+            console.log(`🏗️ [DEBUG] Processing edge type`);
+            const points = MeshUtils.subEdge(this.visual.geometryNode.mesh.edges!, index);
+            if (!points) {
+                console.warn(`🏗️ [DEBUG] Invalid edge ${index} for ${key}`);
+                return undefined;
+            }
+
+            const lineGeometry = new LineSegmentsGeometry();
+            lineGeometry.setPositions(points);
+            const segment = new LineSegments2(lineGeometry);
+            this.highlighter.container.add(segment);
+            segment.applyMatrix4(this.visual.matrixWorld);
+            console.log(`🏗️ [DEBUG] Created edge line segments`);
+            return segment;
+        }
+
+        console.warn(`🏗️ [DEBUG] Invalid type ${type} for ${key}`);
+        return undefined;
     }
 }
 

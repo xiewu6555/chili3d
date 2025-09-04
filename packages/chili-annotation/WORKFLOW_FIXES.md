@@ -184,3 +184,77 @@ this._manager.onSelectionChanged((selectedFaces) => {
 
 - 提交哈希: f3c6bf49
 - 提交信息: "🎯 fix: resolve multi-face selection workflow issues in annotation system"
+
+---
+
+## 面高亮显示修复 (2025-09-04)
+
+### 问题描述
+
+面选择时显示的是绿色线框轮廓而不是填充面片，用户希望像图片中黄色填充效果那样的高亮显示。
+
+### 根本原因
+
+在 `packages/chili-three/src/threeHighlighter.ts` 中：
+
+1. `getOrCloneGeometry()` 方法对面类型调用 `MeshUtils.subFaceOutlines()` 获取轮廓线
+2. 创建 `LineSegments2` 对象显示线框，而不是填充面片
+
+### 修复方案
+
+#### 核心修改
+
+```typescript
+// ❌ 原来的实现 - 显示线框
+if (ShapeType.hasFace(type) || ShapeType.hasShell(type)) {
+    points = MeshUtils.subFaceOutlines(this.visual.geometryNode.mesh.faces!, index);
+    // ...创建 LineSegments2
+}
+
+// ✅ 新的实现 - 显示填充面片
+if (ShapeType.hasFace(type) || ShapeType.hasShell(type)) {
+    const faceData = MeshUtils.subFace(this.visual.geometryNode.mesh.faces!, index);
+    const bufferGeometry = new BufferGeometry();
+    bufferGeometry.setAttribute("position", new BufferAttribute(faceData.position, 3));
+    bufferGeometry.setAttribute("normal", new BufferAttribute(faceData.normal, 3));
+    bufferGeometry.setAttribute("uv", new BufferAttribute(faceData.uv, 2));
+    bufferGeometry.setIndex(Array.from(faceData.index));
+
+    const mesh = new Mesh(bufferGeometry, faceColoredMaterial);
+    // ...
+}
+```
+
+#### 类型系统更新
+
+```typescript
+// 更新状态存储类型支持 Mesh 对象
+private readonly _states: Map<string, [VisualState, LineSegments2 | Mesh | undefined]>
+```
+
+### 修改文件
+
+- `packages/chili-three/src/threeHighlighter.ts`
+    - 添加 `BufferAttribute` 导入
+    - 修改 `getOrCloneGeometry()` 方法，面类型创建 `Mesh` 而非 `LineSegments2`
+    - 更新 `GeometryState._states` 类型定义
+    - 重命名 `addSubEdgeState()` 为 `addSubGeometryState()`，支持面和边两种类型
+
+### 技术要点
+
+1. **面选择**: 使用 `MeshUtils.subFace()` 获取完整几何体数据，创建填充 `Mesh`
+2. **边选择**: 保持原有逻辑，使用 `MeshUtils.subEdge()` 创建线框 `LineSegments2`
+3. **材质选择**: 面类型使用 `faceColoredMaterial`/`faceTransparentMaterial`，边类型使用原有边材质
+
+### 验证结果
+
+✅ 编译成功无错误
+✅ 开发服务器正常启动
+✅ 面选择应显示填充高亮效果
+✅ 边选择保持原有线框效果
+
+### 相关API
+
+- `MeshUtils.subFace()`: 获取单个面的完整几何数据
+- `MeshUtils.subFaceOutlines()`: 获取面轮廓线（已弃用于高亮）
+- `BufferGeometry + Mesh`: 创建填充面片对象

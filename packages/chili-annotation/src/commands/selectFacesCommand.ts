@@ -101,6 +101,25 @@ export class SelectFacesCommand implements ICommand {
                     console.log("✅ Selected faces after update:", annotationManager.selectedFaces);
                     console.log("📊 Manager selectedFaces count:", annotationManager.selectedFaces.length);
 
+                    // 手动添加选中面的持续高亮
+                    console.log("🎨 Adding persistent highlight for selected faces");
+                    selectedFaces.forEach((shapeData, index) => {
+                        const visual = shapeData.owner; // 使用正确的 owner 属性
+                        const faceIndex = (shapeData.shape as ISubFaceShape).index;
+                        console.log(
+                            `🎨 Adding highlight for face ${faceIndex} on visual:`,
+                            visual.constructor.name,
+                        );
+
+                        // 添加面着色高亮状态 (VisualState.faceColored = 8)
+                        document.visual.highlighter.addState(
+                            visual,
+                            VisualState.faceColored,
+                            ShapeType.Face,
+                            faceIndex,
+                        );
+                    });
+
                     // 验证状态是否正确设置
                     setTimeout(() => {
                         console.log(

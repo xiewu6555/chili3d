@@ -472,6 +472,10 @@ export class AnnotationPanel {
                 return;
             }
 
+            // 清除选中面的高亮
+            console.log("🎨 Clearing face highlights after confirmation");
+            this.clearSelectedFacesHighlight();
+
             console.log(`Confirmed annotation: ${activeAnnotation.name}`);
             alert("Annotation confirmed successfully.");
         } catch (error) {
@@ -645,6 +649,15 @@ export class AnnotationPanel {
             `;
             console.log(`📋 Panel display: ${selectedFaces.length} faces - ${selectedFaces.join(", ")}`);
         }
+    }
+
+    /**
+     * 清除选中面的高亮显示
+     */
+    private clearSelectedFacesHighlight(): void {
+        const document = this._manager.document;
+        console.log("🎨 Clearing all face highlights from document");
+        document.visual.highlighter.clear();
     }
 
     /**
