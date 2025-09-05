@@ -1,7 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { IDocument, IDisposable, Id } from "chili-core";
+import { IDocument, IDisposable, Id, VisualState, ShapeType } from "chili-core";
 import { Annotation, AnnotationRecord, ValidationResult } from "./annotation";
 import { AnnotationNode } from "./annotationNode";
 import { MachiningFeatureType, getFeatureName } from "./featureTypes";
@@ -172,6 +172,9 @@ export class AnnotationManager implements IDisposable {
     private _selectedFaces = new Set<number>();
     private _activeAnnotation: AnnotationNode | undefined;
 
+    // 存储面ID到视觉对象的映射
+    private _faceVisualMap = new Map<number, { visual: any; faceIndex: number }>();
+
     // 事件回调
     private _onAnnotationCreated: ((node: AnnotationNode) => void)[] = [];
     private _onAnnotationDeleted: ((node: AnnotationNode) => void)[] = [];
@@ -324,6 +327,44 @@ export class AnnotationManager implements IDisposable {
 
         // 触发选择变更事件
         this._onSelectionChanged.forEach((callback) => callback([]));
+    }
+
+    /**
+     * 更新面ID到视觉对象的映射
+     */
+    updateFaceVisualMapping(faceId: number, visual: any, faceIndex: number): void {
+        this._faceVisualMap.set(faceId, { visual, faceIndex });
+    }
+
+    /**
+     * 高亮标注的所有面
+     */
+    highlightAnnotationFaces(annotationId: string): void {
+        const annotation = this._annotations.get(annotationId);
+        if (!annotation) return;
+
+        // 清除所有现有高亮
+        this.clearAllHighlights();
+
+        // 高亮标注的面
+        annotation.annotation.faces.forEach((faceId) => {
+            const faceVisual = this._faceVisualMap.get(faceId);
+            if (faceVisual) {
+                this._document.visual.highlighter.addState(
+                    faceVisual.visual,
+                    VisualState.faceColored,
+                    ShapeType.Face,
+                    faceVisual.faceIndex,
+                );
+            }
+        });
+    }
+
+    /**
+     * 清除所有面高亮
+     */
+    clearAllHighlights(): void {
+        this._document.visual.highlighter.clear();
     }
 
     /**

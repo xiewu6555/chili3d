@@ -474,7 +474,7 @@ export class AnnotationPanel {
 
             // 清除选中面的高亮
             console.log("🎨 Clearing face highlights after confirmation");
-            this.clearSelectedFacesHighlight();
+            this._manager.clearAllHighlights();
 
             console.log(`Confirmed annotation: ${activeAnnotation.name}`);
             alert("Annotation confirmed successfully.");
@@ -604,6 +604,9 @@ export class AnnotationPanel {
                 this.updateActiveAnnotationDisplay();
                 this.updateAnnotationsList();
                 this.updateSelectedFacesInfo();
+
+                // 高亮标注的面
+                this._manager.highlightAnnotationFaces(annotation.id);
             };
 
             item.innerHTML = `

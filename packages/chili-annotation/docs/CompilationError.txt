@@ -1,0 +1,1485 @@
+npm run dev
+
+> chili3d@0.6.0 dev
+> npx rspack dev
+
+<i> [webpack-dev-server] Project is running at:
+<i> [webpack-dev-server] Loopback: http://localhost:8080/, http://[::1]:8080/
+<i> [webpack-dev-server] On Your Network (IPv4): http://198.18.0.1:8080/
+<i> [webpack-dev-server] Content not from webpack is served from 'F:\Code\OpenProject\chili3d\public' directory
+●  ━━━━━━━━━━━━━━━━━━━━━━━━━ (100%) emitting after emit                                                                 Rspack compiled successfully in 197 ms
+●  ━━━━━━━━━━━━━━━━━━━━━━━━━ (83%) sealing asset processing                                                             Type-checking in progress...
+●  ━━━━━━━━━━━━━━━━━━━━━━━━━ (100%) emitting after emit                                                                 Rspack compiled successfully in 84 ms
+Type-checking in progress...
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:33:22
+TS2345: Argument of type '"annotation.featureType"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    31 |      */
+    32 |     @Serializer.serialze()
+  > 33 |     @Property.define("annotation.featureType")
+       |                      ^^^^^^^^^^^^^^^^^^^^^^^^
+    34 |     get featureType(): MachiningFeatureType {
+    35 |         return this._annotation.type;
+    36 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:40:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    38 |     set featureType(value: MachiningFeatureType) {
+    39 |         this._annotation.type = value;
+  > 40 |         this.onPropertyChanged("featureType");
+       |                                ^^^^^^^^^^^^^
+    41 |     }
+    42 |
+    43 |     /**
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:47:22
+TS2345: Argument of type '"annotation.featureName"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    45 |      */
+    46 |     @Serializer.serialze()
+  > 47 |     @Property.define("annotation.featureName")
+       |                      ^^^^^^^^^^^^^^^^^^^^^^^^
+    48 |     get featureName(): string {
+    49 |         return getFeatureName(this._annotation.type);
+    50 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:63:22
+TS2345: Argument of type '"annotation.faces"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    61 |      */
+    62 |     @Serializer.serialze()
+  > 63 |     @Property.define("annotation.faces")
+       |                      ^^^^^^^^^^^^^^^^^^
+    64 |     get faces(): number[] {
+    65 |         return this._annotation.faces;
+    66 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:79:22
+TS2345: Argument of type '"annotation.geometricParams"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    77 |      */
+    78 |     @Serializer.serialze()
+  > 79 |     @Property.define("annotation.geometricParams")
+       |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    80 |     get geometricParams(): GeometricParams {
+    81 |         return this._annotation.geometricParams;
+    82 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:86:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    84 |     set geometricParams(params: GeometricParams) {
+    85 |         this._annotation.geometricParams = params;
+  > 86 |         this.onPropertyChanged("geometricParams");
+       |                                ^^^^^^^^^^^^^^^^^
+    87 |     }
+    88 |
+    89 |     /**
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:93:22
+TS2345: Argument of type '"annotation.toleranceSpec"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    91 |      */
+    92 |     @Serializer.serialze()
+  > 93 |     @Property.define("annotation.toleranceSpec")
+       |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    94 |     get toleranceSpec(): ToleranceSpec {
+    95 |         return this._annotation.toleranceSpec;
+    96 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:100:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+     98 |     set toleranceSpec(spec: ToleranceSpec) {
+     99 |         this._annotation.toleranceSpec = spec;
+  > 100 |         this.onPropertyChanged("toleranceSpec");
+        |                                ^^^^^^^^^^^^^^^
+    101 |     }
+    102 |
+    103 |     /**
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:106:22
+TS2345: Argument of type '"annotation.confidence"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    104 |      * 置信度
+    105 |      */
+  > 106 |     @Property.define("annotation.confidence")
+        |                      ^^^^^^^^^^^^^^^^^^^^^^^
+    107 |     get confidence(): number {
+    108 |         return this._annotation.metadata.confidence || 1.0;
+    109 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:113:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    111 |     set confidence(value: number) {
+    112 |         this._annotation.setConfidence(value);
+  > 113 |         this.onPropertyChanged("confidence");
+        |                                ^^^^^^^^^^^^
+    114 |     }
+    115 |
+    116 |     /**
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:119:22
+TS2345: Argument of type '"annotation.validated"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    117 |      * 是否已验证
+    118 |      */
+  > 119 |     @Property.define("annotation.validated")
+        |                      ^^^^^^^^^^^^^^^^^^^^^^
+    120 |     get validated(): boolean {
+    121 |         return this._annotation.metadata.validated || false;
+    122 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:127:22
+TS2345: Argument of type '"annotation.annotator"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    125 |      * 标注员
+    126 |      */
+  > 127 |     @Property.define("annotation.annotator")
+        |                      ^^^^^^^^^^^^^^^^^^^^^^
+    128 |     get annotator(): string {
+    129 |         return this._annotation.metadata.annotator;
+    130 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:135:22
+TS2345: Argument of type '"annotation.timestamp"' is not assignable to parameter of type '"arc.angle" | "arc.start" | "axis.x" | "axis.y" | "axis.z" | "body.arc" | "body.bolean" | "body.box" | "body.cylinder" | "body.cone" | "body.group" | "body.sphere" | "body.ellipse" | ... 233 more ... | "viewport.zoomOut"'.
+    133 |      * 标注时间
+    134 |      */
+  > 135 |     @Property.define("annotation.timestamp")
+        |                      ^^^^^^^^^^^^^^^^^^^^^^
+    136 |     get timestamp(): Date {
+    137 |         return this._annotation.metadata.timestamp;
+    138 |     }
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:145:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    143 |     addFaces(faceIds: number | number[]): void {
+    144 |         this._annotation.addFaces(faceIds);
+  > 145 |         this.onPropertyChanged("faces");
+        |                                ^^^^^^^
+    146 |         this.onAnnotationChanged();
+    147 |     }
+    148 |
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:154:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    152 |     removeFaces(faceIds: number | number[]): void {
+    153 |         this._annotation.removeFaces(faceIds);
+  > 154 |         this.onPropertyChanged("faces");
+        |                                ^^^^^^^
+    155 |         this.onAnnotationChanged();
+    156 |     }
+    157 |
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:170:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    168 |     clearFaces(): void {
+    169 |         this._annotation.clearFaces();
+  > 170 |         this.onPropertyChanged("faces");
+        |                                ^^^^^^^
+    171 |         this.onAnnotationChanged();
+    172 |     }
+    173 |
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:179:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    177 |     validate(validator?: string) {
+    178 |         const result = this._annotation.validate(validator);
+  > 179 |         this.onPropertyChanged("validated");
+        |                                ^^^^^^^^^^^
+    180 |         return result;
+    181 |     }
+    182 |
+
+ERROR in ./packages/chili-annotation/src/annotationNode.ts:188:32
+TS2345: Argument of type 'string' is not assignable to parameter of type 'PropertyChangedHandler<this, keyof this>'.
+    186 |     addNote(note: string, user?: string): void {
+    187 |         this._annotation.addNote(note, user);
+  > 188 |         this.onPropertyChanged("notes");
+        |                                ^^^^^^^
+    189 |     }
+    190 |
+    191 |     /**
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:13:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof StartAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'StartAnnotationCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    11 |  * 标注命令 - 启动标注模式
+    12 |  */
+  > 13 | @command("annotation.start")
+       |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    14 | export class StartAnnotationCommand implements ICommand {
+    15 |     async execute(document: IDocument): Promise<void> {
+    16 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:13:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    11 |  * 标注命令 - 启动标注模式
+    12 |  */
+  > 13 | @command("annotation.start")
+       |          ^^^^^^^^^^^^^^^^^^
+    14 | export class StartAnnotationCommand implements ICommand {
+    15 |     async execute(document: IDocument): Promise<void> {
+    16 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:15:11
+TS2416: Property 'execute' in type 'StartAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    13 | @command("annotation.start")
+    14 | export class StartAnnotationCommand implements ICommand {
+  > 15 |     async execute(document: IDocument): Promise<void> {
+       |           ^^^^^^^
+    16 |         try {
+    17 |             // 获取或创建标注管理器
+    18 |             let manager = (document as any)._annotationManager as AnnotationManager;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:25:45
+TS2339: Property 'displays' does not exist on type 'IVisual'.
+    23 |
+    24 |             // 获取显示器
+  > 25 |             const display = document.visual.displays[0];
+       |                                             ^^^^^^^^
+    26 |             if (!display) {
+    27 |                 throw new Error("No display available");
+    28 |             }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:44:57
+TS2339: Property 'workspace' does not exist on type 'IApplication'.
+    42 |
+    43 |                 // 添加面板到UI
+  > 44 |                 const rightPanel = document.application.workspace.rightPanel;
+       |                                                         ^^^^^^^^^
+    45 |                 if (rightPanel) {
+    46 |                     rightPanel.appendChild(panel.element);
+    47 |                 }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:64:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof StopAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'StopAnnotationCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    62 |  * 停止标注命令
+    63 |  */
+  > 64 | @command("annotation.stop")
+       |  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    65 | export class StopAnnotationCommand implements ICommand {
+    66 |     async execute(document: IDocument): Promise<void> {
+    67 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:64:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    62 |  * 停止标注命令
+    63 |  */
+  > 64 | @command("annotation.stop")
+       |          ^^^^^^^^^^^^^^^^^
+    65 | export class StopAnnotationCommand implements ICommand {
+    66 |     async execute(document: IDocument): Promise<void> {
+    67 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:66:11
+TS2416: Property 'execute' in type 'StopAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    64 | @command("annotation.stop")
+    65 | export class StopAnnotationCommand implements ICommand {
+  > 66 |     async execute(document: IDocument): Promise<void> {
+       |           ^^^^^^^
+    67 |         try {
+    68 |             // 获取面选择处理器并停用
+    69 |             const selectionHandler = (document as any)._faceSelectionHandler as FaceSelectionHandler;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:91:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof CreateAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Types of construct signatures are incompatible.
+      Type 'new (featureType: MachiningFeatureType, name?: string | undefined) => CreateAnnotationCommand' is not assignable to type 'new (...args: any[]) => ICommand'.
+        Construct signature return types 'CreateAnnotationCommand' and 'ICommand' are incompatible.
+          The types of 'execute' are incompatible between these types.
+            Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+              Types of parameters 'document' and 'application' are incompatible.
+                Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    89 |  * 创建新标注命令
+    90 |  */
+  > 91 | @command("annotation.create")
+       |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    92 | export class CreateAnnotationCommand implements ICommand {
+    93 |     constructor(
+    94 |         private featureType: MachiningFeatureType,
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:91:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    89 |  * 创建新标注命令
+    90 |  */
+  > 91 | @command("annotation.create")
+       |          ^^^^^^^^^^^^^^^^^^^
+    92 | export class CreateAnnotationCommand implements ICommand {
+    93 |     constructor(
+    94 |         private featureType: MachiningFeatureType,
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:98:11
+TS2416: Property 'execute' in type 'CreateAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+     96 |     ) {}
+     97 |
+  >  98 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+     99 |         const transaction = Transaction.startTransaction(document, "Create Annotation");
+    100 |
+    101 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:99:41
+TS2339: Property 'startTransaction' does not exist on type 'typeof Transaction'.
+     97 |
+     98 |     async execute(document: IDocument): Promise<void> {
+  >  99 |         const transaction = Transaction.startTransaction(document, "Create Annotation");
+        |                                         ^^^^^^^^^^^^^^^^
+    100 |
+    101 |         try {
+    102 |             const manager = (document as any)._annotationManager as AnnotationManager;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:108:57
+TS2345: Argument of type 'string' is not assignable to parameter of type 'MachiningFeatureType'.
+    106 |
+    107 |             const annotationName = this.name || `Feature_${Date.now()}`;
+  > 108 |             const annotation = manager.createAnnotation(annotationName, this.featureType);
+        |                                                         ^^^^^^^^^^^^^^
+    109 |
+    110 |             Transaction.commitTransaction(transaction);
+    111 |             console.log(`Created annotation: ${annotation.name}`);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:110:25
+TS2339: Property 'commitTransaction' does not exist on type 'typeof Transaction'.
+    108 |             const annotation = manager.createAnnotation(annotationName, this.featureType);
+    109 |
+  > 110 |             Transaction.commitTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^
+    111 |             console.log(`Created annotation: ${annotation.name}`);
+    112 |         } catch (error) {
+    113 |             Transaction.rollbackTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:113:25
+TS2339: Property 'rollbackTransaction' does not exist on type 'typeof Transaction'.
+    111 |             console.log(`Created annotation: ${annotation.name}`);
+    112 |         } catch (error) {
+  > 113 |             Transaction.rollbackTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^^^
+    114 |             console.error("Failed to create annotation:", error);
+    115 |             throw error;
+    116 |         }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:123:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof DeleteAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Types of construct signatures are incompatible.
+      Type 'new (annotationId?: string | undefined) => DeleteAnnotationCommand' is not assignable to type 'new (...args: any[]) => ICommand'.
+        Construct signature return types 'DeleteAnnotationCommand' and 'ICommand' are incompatible.
+          The types of 'execute' are incompatible between these types.
+            Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+              Types of parameters 'document' and 'application' are incompatible.
+                Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    121 |  * 删除标注命令
+    122 |  */
+  > 123 | @command("annotation.delete")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    124 | export class DeleteAnnotationCommand implements ICommand {
+    125 |     constructor(private annotationId?: string) {}
+    126 |
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:123:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    121 |  * 删除标注命令
+    122 |  */
+  > 123 | @command("annotation.delete")
+        |          ^^^^^^^^^^^^^^^^^^^
+    124 | export class DeleteAnnotationCommand implements ICommand {
+    125 |     constructor(private annotationId?: string) {}
+    126 |
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:127:11
+TS2416: Property 'execute' in type 'DeleteAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    125 |     constructor(private annotationId?: string) {}
+    126 |
+  > 127 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    128 |         const transaction = Transaction.startTransaction(document, "Delete Annotation");
+    129 |
+    130 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:128:41
+TS2339: Property 'startTransaction' does not exist on type 'typeof Transaction'.
+    126 |
+    127 |     async execute(document: IDocument): Promise<void> {
+  > 128 |         const transaction = Transaction.startTransaction(document, "Delete Annotation");
+        |                                         ^^^^^^^^^^^^^^^^
+    129 |
+    130 |         try {
+    131 |             const manager = (document as any)._annotationManager as AnnotationManager;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:146:21
+TS2551: Property 'removeAnnotation' does not exist on type 'AnnotationManager'. Did you mean 'createAnnotation'?
+    144 |             }
+    145 |
+  > 146 |             manager.removeAnnotation(targetId);
+        |                     ^^^^^^^^^^^^^^^^
+    147 |
+    148 |             Transaction.commitTransaction(transaction);
+    149 |             console.log(`Deleted annotation: ${targetId}`);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:148:25
+TS2339: Property 'commitTransaction' does not exist on type 'typeof Transaction'.
+    146 |             manager.removeAnnotation(targetId);
+    147 |
+  > 148 |             Transaction.commitTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^
+    149 |             console.log(`Deleted annotation: ${targetId}`);
+    150 |         } catch (error) {
+    151 |             Transaction.rollbackTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:151:25
+TS2339: Property 'rollbackTransaction' does not exist on type 'typeof Transaction'.
+    149 |             console.log(`Deleted annotation: ${targetId}`);
+    150 |         } catch (error) {
+  > 151 |             Transaction.rollbackTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^^^
+    152 |             console.error("Failed to delete annotation:", error);
+    153 |             throw error;
+    154 |         }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:161:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof AddFacesToAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Types of construct signatures are incompatible.
+      Type 'new (faceIds: number[], annotationId?: string | undefined) => AddFacesToAnnotationCommand' is not assignable to type 'new (...args: any[]) => ICommand'.
+        Construct signature return types 'AddFacesToAnnotationCommand' and 'ICommand' are incompatible.
+          The types of 'execute' are incompatible between these types.
+            Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+              Types of parameters 'document' and 'application' are incompatible.
+                Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    159 |  * 添加面到标注命令
+    160 |  */
+  > 161 | @command("annotation.addFaces")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    162 | export class AddFacesToAnnotationCommand implements ICommand {
+    163 |     constructor(
+    164 |         private faceIds: number[],
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:161:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    159 |  * 添加面到标注命令
+    160 |  */
+  > 161 | @command("annotation.addFaces")
+        |          ^^^^^^^^^^^^^^^^^^^^^
+    162 | export class AddFacesToAnnotationCommand implements ICommand {
+    163 |     constructor(
+    164 |         private faceIds: number[],
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:168:11
+TS2416: Property 'execute' in type 'AddFacesToAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    166 |     ) {}
+    167 |
+  > 168 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    169 |         const transaction = Transaction.startTransaction(document, "Add Faces to Annotation");
+    170 |
+    171 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:169:41
+TS2339: Property 'startTransaction' does not exist on type 'typeof Transaction'.
+    167 |
+    168 |     async execute(document: IDocument): Promise<void> {
+  > 169 |         const transaction = Transaction.startTransaction(document, "Add Faces to Annotation");
+        |                                         ^^^^^^^^^^^^^^^^
+    170 |
+    171 |         try {
+    172 |             const manager = (document as any)._annotationManager as AnnotationManager;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:188:25
+TS2339: Property 'commitTransaction' does not exist on type 'typeof Transaction'.
+    186 |             annotation.addFaces(this.faceIds);
+    187 |
+  > 188 |             Transaction.commitTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^
+    189 |             console.log(`Added ${this.faceIds.length} faces to annotation: ${annotation.name}`);
+    190 |         } catch (error) {
+    191 |             Transaction.rollbackTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:191:25
+TS2339: Property 'rollbackTransaction' does not exist on type 'typeof Transaction'.
+    189 |             console.log(`Added ${this.faceIds.length} faces to annotation: ${annotation.name}`);
+    190 |         } catch (error) {
+  > 191 |             Transaction.rollbackTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^^^
+    192 |             console.error("Failed to add faces to annotation:", error);
+    193 |             throw error;
+    194 |         }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:201:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof RemoveFacesFromAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Types of construct signatures are incompatible.
+      Type 'new (faceIds: number[], annotationId?: string | undefined) => RemoveFacesFromAnnotationCommand' is not assignable to type 'new (...args: any[]) => ICommand'.
+        Construct signature return types 'RemoveFacesFromAnnotationCommand' and 'ICommand' are incompatible.
+          The types of 'execute' are incompatible between these types.
+            Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+              Types of parameters 'document' and 'application' are incompatible.
+                Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    199 |  * 从标注移除面命令
+    200 |  */
+  > 201 | @command("annotation.removeFaces")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    202 | export class RemoveFacesFromAnnotationCommand implements ICommand {
+    203 |     constructor(
+    204 |         private faceIds: number[],
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:201:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    199 |  * 从标注移除面命令
+    200 |  */
+  > 201 | @command("annotation.removeFaces")
+        |          ^^^^^^^^^^^^^^^^^^^^^^^^
+    202 | export class RemoveFacesFromAnnotationCommand implements ICommand {
+    203 |     constructor(
+    204 |         private faceIds: number[],
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:208:11
+TS2416: Property 'execute' in type 'RemoveFacesFromAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    206 |     ) {}
+    207 |
+  > 208 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    209 |         const transaction = Transaction.startTransaction(document, "Remove Faces from Annotation");
+    210 |
+    211 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:209:41
+TS2339: Property 'startTransaction' does not exist on type 'typeof Transaction'.
+    207 |
+    208 |     async execute(document: IDocument): Promise<void> {
+  > 209 |         const transaction = Transaction.startTransaction(document, "Remove Faces from Annotation");
+        |                                         ^^^^^^^^^^^^^^^^
+    210 |
+    211 |         try {
+    212 |             const manager = (document as any)._annotationManager as AnnotationManager;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:228:25
+TS2339: Property 'commitTransaction' does not exist on type 'typeof Transaction'.
+    226 |             annotation.removeFaces(this.faceIds);
+    227 |
+  > 228 |             Transaction.commitTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^
+    229 |             console.log(`Removed ${this.faceIds.length} faces from annotation: ${annotation.name}`);
+    230 |         } catch (error) {
+    231 |             Transaction.rollbackTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:231:25
+TS2339: Property 'rollbackTransaction' does not exist on type 'typeof Transaction'.
+    229 |             console.log(`Removed ${this.faceIds.length} faces from annotation: ${annotation.name}`);
+    230 |         } catch (error) {
+  > 231 |             Transaction.rollbackTransaction(transaction);
+        |                         ^^^^^^^^^^^^^^^^^^^
+    232 |             console.error("Failed to remove faces from annotation:", error);
+    233 |             throw error;
+    234 |         }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:241:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof ExportAnnotationsCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Types of construct signatures are incompatible.
+      Type 'new (format: "aagnet" | "mftrcad", fileName?: string | undefined) => ExportAnnotationsCommand' is not assignable to type 'new (...args: any[]) => ICommand'.
+        Construct signature return types 'ExportAnnotationsCommand' and 'ICommand' are incompatible.
+          The types of 'execute' are incompatible between these types.
+            Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+              Types of parameters 'document' and 'application' are incompatible.
+                Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    239 |  * 导出标注命令
+    240 |  */
+  > 241 | @command("annotation.export")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    242 | export class ExportAnnotationsCommand implements ICommand {
+    243 |     constructor(
+    244 |         private format: 'aagnet' | 'mftrcad',
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:241:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    239 |  * 导出标注命令
+    240 |  */
+  > 241 | @command("annotation.export")
+        |          ^^^^^^^^^^^^^^^^^^^
+    242 | export class ExportAnnotationsCommand implements ICommand {
+    243 |     constructor(
+    244 |         private format: 'aagnet' | 'mftrcad',
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:248:11
+TS2416: Property 'execute' in type 'ExportAnnotationsCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    246 |     ) {}
+    247 |
+  > 248 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    249 |         try {
+    250 |             const manager = (document as any)._annotationManager as AnnotationManager;
+    251 |             if (!manager) {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:255:41
+TS2551: Property 'getAllAnnotations' does not exist on type 'AnnotationManager'. Did you mean 'getAnnotation'?
+    253 |             }
+    254 |
+  > 255 |             const annotations = manager.getAllAnnotations();
+        |                                         ^^^^^^^^^^^^^^^^^
+    256 |             if (annotations.length === 0) {
+    257 |                 throw new Error("No annotations to export.");
+    258 |             }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:264:36
+TS2551: Property 'exportAnnotations' does not exist on type 'AnnotationManager'. Did you mean 'getAnnotation'?
+    262 |
+    263 |             const fileName = this.fileName || 'model.step';
+  > 264 |             const result = manager.exportAnnotations(this.format, fileName, totalFaceCount);
+        |                                    ^^^^^^^^^^^^^^^^^
+    265 |
+    266 |             // 创建下载
+    267 |             const jsonString = JSON.stringify(result, null, 2);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:271:32
+TS2339: Property 'createElement' does not exist on type 'IDocument'.
+    269 |             const url = URL.createObjectURL(blob);
+    270 |
+  > 271 |             const a = document.createElement('a');
+        |                                ^^^^^^^^^^^^^
+    272 |             a.href = url;
+    273 |             a.download = `annotations_${this.format}_${Date.now()}.json`;
+    274 |             document.body.appendChild(a);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:274:22
+TS2339: Property 'body' does not exist on type 'IDocument'.
+    272 |             a.href = url;
+    273 |             a.download = `annotations_${this.format}_${Date.now()}.json`;
+  > 274 |             document.body.appendChild(a);
+        |                      ^^^^
+    275 |             a.click();
+    276 |             document.body.removeChild(a);
+    277 |             URL.revokeObjectURL(url);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:276:22
+TS2339: Property 'body' does not exist on type 'IDocument'.
+    274 |             document.body.appendChild(a);
+    275 |             a.click();
+  > 276 |             document.body.removeChild(a);
+        |                      ^^^^
+    277 |             URL.revokeObjectURL(url);
+    278 |
+    279 |             console.log(`Exported ${annotations.length} annotations in ${this.format} format`);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:303:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof ValidateAnnotationsCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'ValidateAnnotationsCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    301 |  * 验证标注命令
+    302 |  */
+  > 303 | @command("annotation.validate")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    304 | export class ValidateAnnotationsCommand implements ICommand {
+    305 |     async execute(document: IDocument): Promise<void> {
+    306 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:303:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    301 |  * 验证标注命令
+    302 |  */
+  > 303 | @command("annotation.validate")
+        |          ^^^^^^^^^^^^^^^^^^^^^
+    304 | export class ValidateAnnotationsCommand implements ICommand {
+    305 |     async execute(document: IDocument): Promise<void> {
+    306 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:305:11
+TS2416: Property 'execute' in type 'ValidateAnnotationsCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    303 | @command("annotation.validate")
+    304 | export class ValidateAnnotationsCommand implements ICommand {
+  > 305 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    306 |         try {
+    307 |             const manager = (document as any)._annotationManager as AnnotationManager;
+    308 |             if (!manager) {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:312:36
+TS2339: Property 'validateAllAnnotations' does not exist on type 'AnnotationManager'.
+    310 |             }
+    311 |
+  > 312 |             const result = manager.validateAllAnnotations();
+        |                                    ^^^^^^^^^^^^^^^^^^^^^^
+    313 |
+    314 |             if (result.isValid) {
+    315 |                 console.log("All annotations are valid");
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:342:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof UndoAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'UndoAnnotationCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    340 |  * 撤销标注操作命令
+    341 |  */
+  > 342 | @command("annotation.undo")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    343 | export class UndoAnnotationCommand implements ICommand {
+    344 |     async execute(document: IDocument): Promise<void> {
+    345 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:342:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    340 |  * 撤销标注操作命令
+    341 |  */
+  > 342 | @command("annotation.undo")
+        |          ^^^^^^^^^^^^^^^^^
+    343 | export class UndoAnnotationCommand implements ICommand {
+    344 |     async execute(document: IDocument): Promise<void> {
+    345 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:344:11
+TS2416: Property 'execute' in type 'UndoAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    342 | @command("annotation.undo")
+    343 | export class UndoAnnotationCommand implements ICommand {
+  > 344 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    345 |         try {
+    346 |             const manager = (document as any)._annotationManager as AnnotationManager;
+    347 |             if (!manager) {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:351:25
+TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+  Type 'Boolean' has no call signatures.
+    349 |             }
+    350 |
+  > 351 |             if (manager.canUndo()) {
+        |                         ^^^^^^^
+    352 |                 manager.undo();
+    353 |                 console.log("Annotation operation undone");
+    354 |             } else {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:367:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof RedoAnnotationCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'RedoAnnotationCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    365 |  * 重做标注操作命令
+    366 |  */
+  > 367 | @command("annotation.redo")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    368 | export class RedoAnnotationCommand implements ICommand {
+    369 |     async execute(document: IDocument): Promise<void> {
+    370 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:367:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    365 |  * 重做标注操作命令
+    366 |  */
+  > 367 | @command("annotation.redo")
+        |          ^^^^^^^^^^^^^^^^^
+    368 | export class RedoAnnotationCommand implements ICommand {
+    369 |     async execute(document: IDocument): Promise<void> {
+    370 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:369:11
+TS2416: Property 'execute' in type 'RedoAnnotationCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    367 | @command("annotation.redo")
+    368 | export class RedoAnnotationCommand implements ICommand {
+  > 369 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    370 |         try {
+    371 |             const manager = (document as any)._annotationManager as AnnotationManager;
+    372 |             if (!manager) {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:376:25
+TS6234: This expression is not callable because it is a 'get' accessor. Did you mean to use it without '()'?
+  Type 'Boolean' has no call signatures.
+    374 |             }
+    375 |
+  > 376 |             if (manager.canRedo()) {
+        |                         ^^^^^^^
+    377 |                 manager.redo();
+    378 |                 console.log("Annotation operation redone");
+    379 |             } else {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:392:2
+TS1238: Unable to resolve signature of class decorator when called as an expression.
+  Argument of type 'typeof ClearAnnotationsCommand' is not assignable to parameter of type 'CommandConstructor'.
+    Construct signature return types 'ClearAnnotationsCommand' and 'ICommand' are incompatible.
+      The types of 'execute' are incompatible between these types.
+        Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+          Types of parameters 'document' and 'application' are incompatible.
+            Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    390 |  * 清除所有标注命令
+    391 |  */
+  > 392 | @command("annotation.clear")
+        |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    393 | export class ClearAnnotationsCommand implements ICommand {
+    394 |     async execute(document: IDocument): Promise<void> {
+    395 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:392:10
+TS2345: Argument of type 'string' is not assignable to parameter of type 'CommandData'.
+    390 |  * 清除所有标注命令
+    391 |  */
+  > 392 | @command("annotation.clear")
+        |          ^^^^^^^^^^^^^^^^^^
+    393 | export class ClearAnnotationsCommand implements ICommand {
+    394 |     async execute(document: IDocument): Promise<void> {
+    395 |         try {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:394:11
+TS2416: Property 'execute' in type 'ClearAnnotationsCommand' is not assignable to the same property in base type 'ICommand'.
+  Type '(document: IDocument) => Promise<void>' is not assignable to type '(application: IApplication) => Promise<void>'.
+    Types of parameters 'document' and 'application' are incompatible.
+      Type 'IApplication' is missing the following properties from type 'IDocument': name, rootNode, selection, id, and 17 more.
+    392 | @command("annotation.clear")
+    393 | export class ClearAnnotationsCommand implements ICommand {
+  > 394 |     async execute(document: IDocument): Promise<void> {
+        |           ^^^^^^^
+    395 |         try {
+    396 |             const manager = (document as any)._annotationManager as AnnotationManager;
+    397 |             if (!manager) {
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:401:41
+TS2551: Property 'getAllAnnotations' does not exist on type 'AnnotationManager'. Did you mean 'getAnnotation'?
+    399 |             }
+    400 |
+  > 401 |             const annotations = manager.getAllAnnotations();
+        |                                         ^^^^^^^^^^^^^^^^^
+    402 |             if (annotations.length === 0) {
+    403 |                 console.log("No annotations to clear");
+    404 |                 return;
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:412:45
+TS2339: Property 'startTransaction' does not exist on type 'typeof Transaction'.
+    410 |             }
+    411 |
+  > 412 |             const transaction = Transaction.startTransaction(document, "Clear All Annotations");
+        |                                             ^^^^^^^^^^^^^^^^
+    413 |
+    414 |             try {
+    415 |                 // 逐个删除所有标注
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:416:55
+TS7006: Parameter 'a' implicitly has an 'any' type.
+    414 |             try {
+    415 |                 // 逐个删除所有标注
+  > 416 |                 const annotationIds = annotations.map(a => a.id);
+        |                                                       ^
+    417 |                 for (const id of annotationIds) {
+    418 |                     manager.removeAnnotation(id);
+    419 |                 }
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:418:29
+TS2551: Property 'removeAnnotation' does not exist on type 'AnnotationManager'. Did you mean 'createAnnotation'?
+    416 |                 const annotationIds = annotations.map(a => a.id);
+    417 |                 for (const id of annotationIds) {
+  > 418 |                     manager.removeAnnotation(id);
+        |                             ^^^^^^^^^^^^^^^^
+    419 |                 }
+    420 |
+    421 |                 Transaction.commitTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:421:29
+TS2339: Property 'commitTransaction' does not exist on type 'typeof Transaction'.
+    419 |                 }
+    420 |
+  > 421 |                 Transaction.commitTransaction(transaction);
+        |                             ^^^^^^^^^^^^^^^^^
+    422 |                 console.log(`Cleared ${annotationIds.length} annotations`);
+    423 |             } catch (error) {
+    424 |                 Transaction.rollbackTransaction(transaction);
+
+ERROR in ./packages/chili-annotation/src/commands/annotationCommand.ts:424:29
+TS2339: Property 'rollbackTransaction' does not exist on type 'typeof Transaction'.
+    422 |                 console.log(`Cleared ${annotationIds.length} annotations`);
+    423 |             } catch (error) {
+  > 424 |                 Transaction.rollbackTransaction(transaction);
+        |                             ^^^^^^^^^^^^^^^^^^^
+    425 |                 throw error;
+    426 |             }
+    427 |         } catch (error) {
+
+ERROR in ./packages/chili-annotation/src/index.ts:11:1
+TS2308: Module "./annotationManager" has already exported a member named 'DefaultAnnotationValidator'. Consider explicitly re-exporting to resolve the ambiguity.
+     9 |
+    10 | // Validators
+  > 11 | export * from "./validators";
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    12 |
+    13 | // Exporters
+    14 | export * from "./exporters";
+
+ERROR in ./packages/chili-annotation/src/index.ts:11:1
+TS2308: Module "./annotationManager" has already exported a member named 'IAnnotationValidator'. Consider explicitly re-exporting to resolve the ambiguity.
+     9 |
+    10 | // Validators
+  > 11 | export * from "./validators";
+       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    12 |
+    13 | // Exporters
+    14 | export * from "./exporters";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:10
+TS2305: Module '"chili-ui"' has no exported member 'button'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |          ^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:18
+TS2305: Module '"chili-ui"' has no exported member 'div'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                  ^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:23
+TS2305: Module '"chili-ui"' has no exported member 'label'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                       ^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:30
+TS2305: Module '"chili-ui"' has no exported member 'select'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                              ^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:38
+TS2305: Module '"chili-ui"' has no exported member 'span'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                                      ^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:44
+TS2305: Module '"chili-ui"' has no exported member 'localize'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                                            ^^^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:54
+TS2305: Module '"chili-ui"' has no exported member 'IControl'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                                                      ^^^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:4:64
+TS2305: Module '"chili-ui"' has no exported member 'IDocument'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+      |                                                                ^^^^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+    7 | import { AnnotationNode } from "../annotationNode";
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:6:32
+TS2724: '"../featureTypes"' has no exported member named 'MachiningFeatureInfo'. Did you mean 'MachiningFeatureType'?
+    4 | import { button, div, label, select, span, localize, IControl, IDocument } from "chili-ui";
+    5 | import { AnnotationManager } from "../annotationManager";
+  > 6 | import { MachiningFeatureType, MachiningFeatureInfo } from "../featureTypes";
+      |                                ^^^^^^^^^^^^^^^^^^^^
+    7 | import { AnnotationNode } from "../annotationNode";
+    8 |
+    9 | /**
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:16:13
+TS2564: Property '_activeAnnotationInfo' has no initializer and is not definitely assigned in the constructor.
+    14 |     private _element: HTMLDivElement;
+    15 |     private _featureTypeSelect: HTMLSelectElement | undefined;
+  > 16 |     private _activeAnnotationInfo: HTMLDivElement;
+       |             ^^^^^^^^^^^^^^^^^^^^^
+    17 |     private _selectedFacesInfo: HTMLDivElement;
+    18 |     private _annotationsList: HTMLDivElement;
+    19 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:17:13
+TS2564: Property '_selectedFacesInfo' has no initializer and is not definitely assigned in the constructor.
+    15 |     private _featureTypeSelect: HTMLSelectElement | undefined;
+    16 |     private _activeAnnotationInfo: HTMLDivElement;
+  > 17 |     private _selectedFacesInfo: HTMLDivElement;
+       |             ^^^^^^^^^^^^^^^^^^
+    18 |     private _annotationsList: HTMLDivElement;
+    19 |
+    20 |     constructor(manager: AnnotationManager, document: IDocument) {
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:18:13
+TS2564: Property '_annotationsList' has no initializer and is not definitely assigned in the constructor.
+    16 |     private _activeAnnotationInfo: HTMLDivElement;
+    17 |     private _selectedFacesInfo: HTMLDivElement;
+  > 18 |     private _annotationsList: HTMLDivElement;
+       |             ^^^^^^^^^^^^^^^^
+    19 |
+    20 |     constructor(manager: AnnotationManager, document: IDocument) {
+    21 |         this._manager = manager;
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:339:23
+TS2339: Property 'onSelectedFacesChanged' does not exist on type 'AnnotationManager'.
+    337 |     private setupEventListeners(): void {
+    338 |         // 监听选中面变化
+  > 339 |         this._manager.onSelectedFacesChanged.add((faces) => {
+        |                       ^^^^^^^^^^^^^^^^^^^^^^
+    340 |             this.updateSelectedFacesDisplay(faces);
+    341 |         });
+    342 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:339:51
+TS7006: Parameter 'faces' implicitly has an 'any' type.
+    337 |     private setupEventListeners(): void {
+    338 |         // 监听选中面变化
+  > 339 |         this._manager.onSelectedFacesChanged.add((faces) => {
+        |                                                   ^^^^^
+    340 |             this.updateSelectedFacesDisplay(faces);
+    341 |         });
+    342 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:344:23
+TS2339: Property 'onActiveAnnotationChanged' does not exist on type 'AnnotationManager'.
+    342 |
+    343 |         // 监听活动标注变化
+  > 344 |         this._manager.onActiveAnnotationChanged.add((annotation) => {
+        |                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+    345 |             this.updateActiveAnnotationDisplay(annotation);
+    346 |         });
+    347 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:344:54
+TS7006: Parameter 'annotation' implicitly has an 'any' type.
+    342 |
+    343 |         // 监听活动标注变化
+  > 344 |         this._manager.onActiveAnnotationChanged.add((annotation) => {
+        |                                                      ^^^^^^^^^^
+    345 |             this.updateActiveAnnotationDisplay(annotation);
+    346 |         });
+    347 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:349:23
+TS2551: Property 'onAnnotationAdded' does not exist on type 'AnnotationManager'. Did you mean 'onAnnotationCreated'?
+    347 |
+    348 |         // 监听标注列表变化
+  > 349 |         this._manager.onAnnotationAdded.add(() => {
+        |                       ^^^^^^^^^^^^^^^^^
+    350 |             this.updateAnnotationsList();
+    351 |         });
+    352 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:353:23
+TS2551: Property 'onAnnotationRemoved' does not exist on type 'AnnotationManager'. Did you mean 'onAnnotationCreated'?
+    351 |         });
+    352 |
+  > 353 |         this._manager.onAnnotationRemoved.add(() => {
+        |                       ^^^^^^^^^^^^^^^^^^^
+    354 |             this.updateAnnotationsList();
+    355 |         });
+    356 |
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:357:23
+TS2551: Property 'onAnnotationUpdated' does not exist on type 'AnnotationManager'. Did you mean 'onAnnotationCreated'?
+    355 |         });
+    356 |
+  > 357 |         this._manager.onAnnotationUpdated.add(() => {
+        |                       ^^^^^^^^^^^^^^^^^^^
+    358 |             this.updateAnnotationsList();
+    359 |             this.updateActiveAnnotationDisplay();
+    360 |         });
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:385:63
+TS2345: Argument of type 'string' is not assignable to parameter of type 'MachiningFeatureType'.
+    383 |
+    384 |         try {
+  > 385 |             const annotation = this._manager.createAnnotation(annotationName, featureType);
+        |                                                               ^^^^^^^^^^^^^^
+    386 |             console.log(`Created annotation: ${annotation.name}`);
+    387 |         } catch (error) {
+    388 |             alert(`Failed to create annotation: ${error}`);
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:433:31
+TS2551: Property 'removeAnnotation' does not exist on type 'AnnotationManager'. Did you mean 'createAnnotation'?
+    431 |         if (confirm(`Delete annotation "${activeAnnotation.name}"?`)) {
+    432 |             try {
+  > 433 |                 this._manager.removeAnnotation(activeAnnotation.id);
+        |                               ^^^^^^^^^^^^^^^^
+    434 |             } catch (error) {
+    435 |                 alert(`Failed to delete annotation: ${error}`);
+    436 |             }
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:442:42
+TS2551: Property 'exportAnnotations' does not exist on type 'AnnotationManager'. Did you mean 'getAnnotation'?
+    440 |     private onExport(format: 'aagnet' | 'mftrcad'): void {
+    441 |         try {
+  > 442 |             const result = this._manager.exportAnnotations(format, 'model.step', 100);
+        |                                          ^^^^^^^^^^^^^^^^^
+    443 |
+    444 |             // 创建下载
+    445 |             const jsonString = JSON.stringify(result, null, 2);
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:476:60
+TS2339: Property 'type' does not exist on type 'AnnotationNode'.
+    474 |         }
+    475 |
+  > 476 |         const info = MachiningFeatureInfo[activeAnnotation.type];
+        |                                                            ^^^^
+    477 |         this._activeAnnotationInfo.innerHTML = `
+    478 |             <div style="margin-bottom: 4px;">
+    479 |                 <strong>${activeAnnotation.name}</strong>
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:515:43
+TS2551: Property 'getAllAnnotations' does not exist on type 'AnnotationManager'. Did you mean 'getAnnotation'?
+    513 |         if (!this._annotationsList) return;
+    514 |
+  > 515 |         const annotations = this._manager.getAllAnnotations();
+        |                                           ^^^^^^^^^^^^^^^^^
+    516 |
+    517 |         if (annotations.length === 0) {
+    518 |             this._annotationsList.innerHTML = `
+
+ERROR in ./packages/chili-annotation/src/ui/annotationPanel.ts:528:29
+TS7006: Parameter 'annotation' implicitly has an 'any' type.
+    526 |         this._annotationsList.innerHTML = '';
+    527 |
+  > 528 |         annotations.forEach(annotation => {
+        |                             ^^^^^^^^^^
+    529 |             const info = MachiningFeatureInfo[annotation.type];
+    530 |             const isActive = this._manager.activeAnnotation?.id === annotation.id;
+    531 |
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:4:21
+TS2305: Module '"chili-core"' has no exported member 'IVisualizationDisplay'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { IDocument, IVisualizationDisplay, IVisualShape } from "chili-core";
+      |                     ^^^^^^^^^^^^^^^^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 |
+    7 | /**
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:4:44
+TS2305: Module '"chili-core"' has no exported member 'IVisualShape'.
+    2 | // See LICENSE file in the project root for full license information.
+    3 |
+  > 4 | import { IDocument, IVisualizationDisplay, IVisualShape } from "chili-core";
+      |                                            ^^^^^^^^^^^^
+    5 | import { AnnotationManager } from "../annotationManager";
+    6 |
+    7 | /**
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:57:23
+TS2551: Property 'setSelectedFaces' does not exist on type 'AnnotationManager'. Did you mean 'selectedFaces'?
+    55 |         this._selectedFaces.clear();
+    56 |         this.clearHighlights();
+  > 57 |         this._manager.setSelectedFaces([]);
+       |                       ^^^^^^^^^^^^^^^^
+    58 |     }
+    59 |
+    60 |     /**
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:72:23
+TS2551: Property 'setSelectedFaces' does not exist on type 'AnnotationManager'. Did you mean 'selectedFaces'?
+    70 |         });
+    71 |
+  > 72 |         this._manager.setSelectedFaces(Array.from(this._selectedFaces));
+       |                       ^^^^^^^^^^^^^^^^
+    73 |     }
+    74 |
+    75 |     /**
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:82:27
+TS2551: Property 'setSelectedFaces' does not exist on type 'AnnotationManager'. Did you mean 'selectedFaces'?
+    80 |             this._selectedFaces.add(faceId);
+    81 |             this.highlightFace(faceId);
+  > 82 |             this._manager.setSelectedFaces(Array.from(this._selectedFaces));
+       |                           ^^^^^^^^^^^^^^^^
+    83 |         }
+    84 |     }
+    85 |
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:93:27
+TS2551: Property 'setSelectedFaces' does not exist on type 'AnnotationManager'. Did you mean 'selectedFaces'?
+    91 |             this._selectedFaces.delete(faceId);
+    92 |             this.unhighlightFace(faceId);
+  > 93 |             this._manager.setSelectedFaces(Array.from(this._selectedFaces));
+       |                           ^^^^^^^^^^^^^^^^
+    94 |         }
+    95 |     }
+    96 |
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:110:44
+TS7006: Parameter 'visual' implicitly has an 'any' type.
+    108 |     private setupEventListeners(): void {
+    109 |         // 监听鼠标点击事件
+  > 110 |         this._display.selectedChanged.add((visual) => {
+        |                                            ^^^^^^
+    111 |             if (!this._isActive) return;
+    112 |
+    113 |             this.handleVisualSelection(visual);
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:224:33
+TS7006: Parameter 'visual' implicitly has an 'any' type.
+    222 |             // 遍历document中的所有visual对象
+    223 |             const visuals = this._display.getVisualObjects();
+  > 224 |             return visuals.find(visual => {
+        |                                 ^^^^^^
+    225 |                 const visualFaceId = this.extractFaceIdFromVisual(visual);
+    226 |                 return visualFaceId === faceId;
+    227 |             });
+
+ERROR in ./packages/chili-annotation/src/ui/faceSelectionHandler.ts:296:29
+TS7006: Parameter 'visual' implicitly has an 'any' type.
+    294 |             const faceIds: number[] = [];
+    295 |
+  > 296 |             visuals.forEach(visual => {
+        |                             ^^^^^^
+    297 |                 const faceId = this.extractFaceIdFromVisual(visual);
+    298 |                 if (faceId !== undefined) {
+    299 |                     faceIds.push(faceId);
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:39:35
+TS2551: Property 'geometricParameters' does not exist on type 'Annotation'. Did you mean 'geometricParams'?
+    37 |      */
+    38 |     private validateGeometricParameters(annotation: Annotation, result: ValidationResult): void {
+  > 39 |         const params = annotation.geometricParameters;
+       |                                   ^^^^^^^^^^^^^^^^^^^
+    40 |
+    41 |         if (!params || Object.keys(params).length === 0) {
+    42 |             result.warnings.push(`Feature '${annotation.name}' has no geometric parameters`);
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:63:37
+TS4111: Property 'diameter' comes from an index signature, so it must be accessed with ['diameter'].
+    61 |         // 验证直径参数
+    62 |         if ('diameter' in params) {
+  > 63 |             const diameter = params.diameter;
+       |                                     ^^^^^^^^
+    64 |             if (typeof diameter !== 'number' || diameter <= 0) {
+    65 |                 result.errors.push(`Invalid diameter value: ${diameter}. Must be a positive number.`);
+    66 |             } else if (diameter > 1000) {
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:73:34
+TS4111: Property 'depth' comes from an index signature, so it must be accessed with ['depth'].
+    71 |         // 验证深度参数
+    72 |         if ('depth' in params) {
+  > 73 |             const depth = params.depth;
+       |                                  ^^^^^
+    74 |             if (typeof depth !== 'number' || depth < 0) {
+    75 |                 result.errors.push(`Invalid depth value: ${depth}. Must be non-negative.`);
+    76 |             } else if (depth > 500) {
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:83:35
+TS4111: Property 'radius' comes from an index signature, so it must be accessed with ['radius'].
+    81 |         // 验证半径参数
+    82 |         if ('radius' in params) {
+  > 83 |             const radius = params.radius;
+       |                                   ^^^^^^
+    84 |             if (typeof radius !== 'number' || radius <= 0) {
+    85 |                 result.errors.push(`Invalid radius value: ${radius}. Must be a positive number.`);
+    86 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:91:34
+TS4111: Property 'angle' comes from an index signature, so it must be accessed with ['angle'].
+    89 |         // 验证角度参数
+    90 |         if ('angle' in params) {
+  > 91 |             const angle = params.angle;
+       |                                  ^^^^^
+    92 |             if (typeof angle !== 'number' || angle < 0 || angle > 360) {
+    93 |                 result.errors.push(`Invalid angle value: ${angle}. Must be between 0 and 360 degrees.`);
+    94 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:99:35
+TS4111: Property 'length' comes from an index signature, so it must be accessed with ['length'].
+     97 |         // 验证长度参数
+     98 |         if ('length' in params) {
+  >  99 |             const length = params.length;
+        |                                   ^^^^^^
+    100 |             if (typeof length !== 'number' || length <= 0) {
+    101 |                 result.errors.push(`Invalid length value: ${length}. Must be a positive number.`);
+    102 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:107:34
+TS4111: Property 'width' comes from an index signature, so it must be accessed with ['width'].
+    105 |         // 验证宽度参数
+    106 |         if ('width' in params) {
+  > 107 |             const width = params.width;
+        |                                  ^^^^^
+    108 |             if (typeof width !== 'number' || width <= 0) {
+    109 |                 result.errors.push(`Invalid width value: ${width}. Must be a positive number.`);
+    110 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:115:35
+TS4111: Property 'height' comes from an index signature, so it must be accessed with ['height'].
+    113 |         // 验证高度参数
+    114 |         if ('height' in params) {
+  > 115 |             const height = params.height;
+        |                                   ^^^^^^
+    116 |             if (typeof height !== 'number' || height <= 0) {
+    117 |                 result.errors.push(`Invalid height value: ${height}. Must be a positive number.`);
+    118 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:185:37
+TS4111: Property 'diameter' comes from an index signature, so it must be accessed with ['diameter'].
+    183 |         // 验证孔的几何合理性
+    184 |         if ('diameter' in params && 'depth' in params) {
+  > 185 |             const diameter = params.diameter;
+        |                                     ^^^^^^^^
+    186 |             const depth = params.depth;
+    187 |
+    188 |             if (depth > diameter * 10) {
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:186:34
+TS4111: Property 'depth' comes from an index signature, so it must be accessed with ['depth'].
+    184 |         if ('diameter' in params && 'depth' in params) {
+    185 |             const diameter = params.diameter;
+  > 186 |             const depth = params.depth;
+        |                                  ^^^^^
+    187 |
+    188 |             if (depth > diameter * 10) {
+    189 |                 result.warnings.push(`Hole depth (${depth}mm) is much larger than diameter (${diameter}mm). Check aspect ratio.`);
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:209:34
+TS4111: Property 'angle' comes from an index signature, so it must be accessed with ['angle'].
+    207 |         // 验证倒角角度
+    208 |         if ('angle' in params) {
+  > 209 |             const angle = params.angle;
+        |                                  ^^^^^
+    210 |             if (angle < 5 || angle > 85) {
+    211 |                 result.warnings.push(`Chamfer angle (${angle}°) is unusual. Typical range is 5-85 degrees.`);
+    212 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:217:37
+TS4111: Property 'distance' comes from an index signature, so it must be accessed with ['distance'].
+    215 |         // 验证倒角距离
+    216 |         if ('distance' in params) {
+  > 217 |             const distance = params.distance;
+        |                                     ^^^^^^^^
+    218 |             if (distance > 20) {
+    219 |                 result.warnings.push(`Large chamfer distance (${distance}mm). Please verify this is correct.`);
+    220 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:239:35
+TS4111: Property 'radius' comes from an index signature, so it must be accessed with ['radius'].
+    237 |         // 验证圆角半径合理性
+    238 |         if ('radius' in params) {
+  > 239 |             const radius = params.radius;
+        |                                   ^^^^^^
+    240 |             if (radius > 50) {
+    241 |                 result.warnings.push(`Large round radius (${radius}mm). Please verify this is correct.`);
+    242 |             }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:290:35
+TS4111: Property 'length' comes from an index signature, so it must be accessed with ['length'].
+    288 |         // 验证槽的纵横比
+    289 |         if ('length' in params && 'width' in params) {
+  > 290 |             const length = params.length;
+        |                                   ^^^^^^
+    291 |             const width = params.width;
+    292 |
+    293 |             if (length < width) {
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:291:34
+TS4111: Property 'width' comes from an index signature, so it must be accessed with ['width'].
+    289 |         if ('length' in params && 'width' in params) {
+    290 |             const length = params.length;
+  > 291 |             const width = params.width;
+        |                                  ^^^^^
+    292 |
+    293 |             if (length < width) {
+    294 |                 result.warnings.push(`Slot length (${length}mm) is less than width (${width}mm). Check dimensions.`);
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:320:35
+TS2551: Property 'geometricParameters' does not exist on type 'Annotation'. Did you mean 'geometricParams'?
+    318 |      */
+    319 |     private validateFeatureDimensions(annotation: Annotation, result: ValidationResult): void {
+  > 320 |         const params = annotation.geometricParameters;
+        |                                   ^^^^^^^^^^^^^^^^^^^
+    321 |         if (!params) return;
+    322 |
+    323 |         // 检查尺寸是否在合理范围内
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:353:39
+TS2551: Property 'toleranceSpecs' does not exist on type 'Annotation'. Did you mean 'toleranceSpec'?
+    351 |      */
+    352 |     private validateToleranceSpecs(annotation: Annotation, result: ValidationResult): void {
+  > 353 |         const tolerances = annotation.toleranceSpecs;
+        |                                       ^^^^^^^^^^^^^^
+    354 |         if (!tolerances || Object.keys(tolerances).length === 0) {
+    355 |             return; // 公差是可选的
+    356 |         }
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:460:45
+TS2551: Property 'geometricParameters' does not exist on type 'Annotation'. Did you mean 'geometricParams'?
+    458 |
+    459 |         const firstAnnotation = annotations[0];
+  > 460 |         const firstParams = firstAnnotation.geometricParameters;
+        |                                             ^^^^^^^^^^^^^^^^^^^
+    461 |         if (!firstParams) return;
+    462 |
+    463 |         // 检查关键尺寸参数的一致性
+
+ERROR in ./packages/chili-annotation/src/validators/geometryValidator.ts:473:47
+TS2551: Property 'geometricParameters' does not exist on type 'Annotation'. Did you mean 'geometricParams'?
+    471 |
+    472 |             for (let i = 1; i < annotations.length; i++) {
+  > 473 |                 const params = annotations[i].geometricParameters;
+        |                                               ^^^^^^^^^^^^^^^^^^^
+    474 |                 if (params && param in params) {
+    475 |                     values.push(params[param]);
+    476 |                 }
+
+Found 136 errors in 2219 ms.

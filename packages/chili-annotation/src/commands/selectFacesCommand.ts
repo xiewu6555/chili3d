@@ -101,6 +101,13 @@ export class SelectFacesCommand implements ICommand {
                     console.log("✅ Selected faces after update:", annotationManager.selectedFaces);
                     console.log("📊 Manager selectedFaces count:", annotationManager.selectedFaces.length);
 
+                    // 存储面ID到视觉对象的映射
+                    selectedFaces.forEach((shapeData) => {
+                        const visual = shapeData.owner;
+                        const faceIndex = (shapeData.shape as ISubFaceShape).index;
+                        annotationManager.updateFaceVisualMapping(faceIndex, visual, faceIndex);
+                    });
+
                     // 先清除pickShape过程中的临时高亮，然后添加持续高亮
                     console.log("🎨 Adding persistent highlight for selected faces");
                     selectedFaces.forEach((shapeData, index) => {
