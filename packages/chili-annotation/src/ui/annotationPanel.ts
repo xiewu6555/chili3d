@@ -3,7 +3,16 @@
 
 import { IDocument } from "chili-core";
 import { AnnotationManager } from "../annotationManager";
-import { MachiningFeatureType, FEATURE_NAMES_EN, FEATURE_NAMES_CN } from "../featureTypes";
+import {
+    MachiningFeatureType,
+    FEATURE_NAMES_EN,
+    FEATURE_NAMES_CN,
+    FeatureCategory,
+    CATEGORY_NAMES_CN,
+    FEATURE_CATEGORIES,
+    getFeaturesByCategory,
+} from "../featureTypes";
+import { ExportService } from "../exporters/exportService";
 import { AnnotationNode } from "../annotationNode";
 import { SelectFacesCommand } from "../commands/selectFacesCommand";
 
@@ -18,10 +27,12 @@ export class AnnotationPanel {
     private _activeAnnotationInfo: HTMLDivElement | undefined;
     private _selectedFacesInfo: HTMLDivElement | undefined;
     private _annotationsList: HTMLDivElement | undefined;
+    private _exportService: ExportService;
 
     constructor(manager: AnnotationManager, document: IDocument) {
         this._manager = manager;
         this._document = document;
+        this._exportService = new ExportService();
         this._element = this.createPanelElement();
 
         // 监听管理器事件
@@ -130,19 +141,33 @@ export class AnnotationPanel {
         defaultOption.textContent = "Select feature type...";
         this._featureTypeSelect.appendChild(defaultOption);
 
-        // 添加所有特征类型
-        Object.entries(MachiningFeatureType)
-            .filter(([key, value]) => typeof value === "number")
-            .forEach(([key, value]) => {
+        // 按分类添加特征类型
+        const categories = Object.values(FeatureCategory);
+
+        categories.forEach((category) => {
+            // 创建选项组
+            const optgroup = globalThis.document.createElement("optgroup");
+            const categoryNameCN = CATEGORY_NAMES_CN[category];
+            optgroup.label = `${category} (${categoryNameCN})`;
+
+            // 获取该分类下的所有特征类型
+            const features = getFeaturesByCategory(category);
+
+            features.forEach((featureType) => {
                 const option = globalThis.document.createElement("option");
-                option.value = value.toString();
+                option.value = featureType.toString();
 
-                const nameEN = FEATURE_NAMES_EN[value as MachiningFeatureType];
-                const nameCN = FEATURE_NAMES_CN[value as MachiningFeatureType];
-                option.textContent = `${nameEN} (${nameCN})`;
+                const nameEN = FEATURE_NAMES_EN[featureType];
+                const nameCN = FEATURE_NAMES_CN[featureType];
+                option.textContent = `  ${nameEN} (${nameCN})`;
 
-                this._featureTypeSelect!.appendChild(option);
+                optgroup.appendChild(option);
             });
+
+            if (features.length > 0) {
+                this._featureTypeSelect!.appendChild(optgroup);
+            }
+        });
     }
 
     private createActiveAnnotationSection(): HTMLElement {
@@ -273,32 +298,75 @@ export class AnnotationPanel {
         section.style.cssText = `
             border-top: 1px solid #eee;
             padding-top: 12px;
+        `;
+
+        // 添加标题
+        const title = globalThis.document.createElement("h4");
+        title.textContent = "导出";
+        title.style.cssText = `
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #333;
             display: flex;
-            gap: 2%;
+            align-items: center;
+            gap: 8px;
+        `;
+        title.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+            </svg>
+            导出
+        `;
+        section.appendChild(title);
+
+        // 导出按钮容器
+        const buttonsContainer = globalThis.document.createElement("div");
+        buttonsContainer.style.cssText = `
+            display: flex;
+            gap: 8px;
         `;
 
         const exportButtons = [
-            { text: "Export AAGNet", format: "aagnet" as const, color: "#6f42c1" },
-            { text: "Export MFTRCAD", format: "mftrcad" as const, color: "#17a2b8" },
+            { text: "导出AAGNet", format: "aagnet" as const, color: "#6f42c1", icon: "📊" },
+            { text: "导出MFTRCAD", format: "mftrcad" as const, color: "#17a2b8", icon: "🔧" },
         ];
 
         exportButtons.forEach((btn) => {
             const button = globalThis.document.createElement("button");
-            button.textContent = btn.text;
+            button.innerHTML = `${btn.icon} ${btn.text}`;
             button.style.cssText = `
-                width: 49%;
-                padding: 6px;
+                flex: 1;
+                padding: 10px 8px;
                 background-color: ${btn.color};
                 color: white;
                 border: none;
-                border-radius: 4px;
+                border-radius: 6px;
                 cursor: pointer;
-                font-size: 12px;
+                font-size: 13px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
             `;
-            button.onclick = () => this.onExport(btn.format);
-            section.appendChild(button);
+
+            // 添加悬停效果
+            button.addEventListener("mouseenter", () => {
+                button.style.transform = "translateY(-1px)";
+                button.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+            });
+
+            button.addEventListener("mouseleave", () => {
+                button.style.transform = "translateY(0)";
+                button.style.boxShadow = "none";
+            });
+
+            button.onclick = () => this.onExportWithDirectorySelection(btn.format);
+            buttonsContainer.appendChild(button);
         });
 
+        section.appendChild(buttonsContainer);
         return section;
     }
 
@@ -501,41 +569,145 @@ export class AnnotationPanel {
         }
     }
 
-    private onExport(format: "aagnet" | "mftrcad"): void {
+    private async onExportWithDirectorySelection(format: "aagnet" | "mftrcad"): Promise<void> {
         try {
             const annotations = (this._manager as any).annotations || [];
+
             if (annotations.length === 0) {
-                alert("No annotations to export");
+                alert("没有可导出的标注数据。");
                 return;
             }
 
-            // 简化的导出
-            const exportData = {
+            // 显示加载状态
+            const loadingElement = this.showLoadingMessage("正在导出标注数据...");
+
+            // 获取模型文件名
+            const modelFileName = this._document?.name || "model";
+            const totalFaceCount = this.calculateTotalFaceCount();
+
+            // 执行导出（包含文件保存对话框）
+            const result = await this._exportService.exportAnnotations(
+                annotations,
+                modelFileName,
+                totalFaceCount,
                 format,
-                annotations: annotations.map((ann: any) => ({
-                    id: ann.id,
-                    name: ann.name,
-                    type: ann.type,
-                    faces: ann.faces,
-                })),
-                timestamp: new Date().toISOString(),
-            };
+                {
+                    includeMetadata: true,
+                    includeHistory: false,
+                    compressOutput: false,
+                    validateOutput: true,
+                },
+            );
 
-            // 创建下载
-            const jsonString = JSON.stringify(exportData, null, 2);
-            const blob = new Blob([jsonString], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
+            this.hideLoadingMessage(loadingElement);
 
-            const a = globalThis.document.createElement("a");
-            a.href = url;
-            a.download = `annotations_${format}_${Date.now()}.json`;
-            globalThis.document.body.appendChild(a);
-            a.click();
-            globalThis.document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            if (result.success) {
+                if (result.metadata.exportPath) {
+                    alert(
+                        `${format.toUpperCase()}格式导出完成！\n文件已保存到: ${result.metadata.exportPath}\\${result.metadata.fileName}`,
+                    );
+                } else {
+                    alert(`${format.toUpperCase()}格式导出完成！\n文件已下载: ${result.metadata.fileName}`);
+                }
+            } else {
+                alert(`导出失败：\n${result.errors.join("\n")}`);
+            }
         } catch (error) {
-            alert(`Export failed: ${error}`);
+            console.error("Export failed:", error);
+            alert(`导出过程中发生错误：${error}`);
         }
+    }
+
+    private calculateTotalFaceCount(): number {
+        // 这里应该从实际的文档/模型中获取总面数
+        // 目前使用一个估算值
+        const annotations = (this._manager as any).annotations || [];
+        let totalFaces = 0;
+        for (const annotation of annotations) {
+            if (annotation.faces && annotation.faces.length > 0) {
+                const maxFaceId = Math.max(...annotation.faces);
+                totalFaces = Math.max(totalFaces, maxFaceId + 1);
+            }
+        }
+        return totalFaces > 0 ? totalFaces : 1000; // 默认值
+    }
+
+    private downloadFile(data: any, fileName: string): void {
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = globalThis.document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        globalThis.document.body.appendChild(a);
+        a.click();
+        globalThis.document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    private showLoadingMessage(message: string): HTMLElement {
+        const loading = globalThis.document.createElement("div");
+        loading.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        `;
+
+        loading.innerHTML = `
+            <div style="
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            ">
+                <div style="margin-bottom: 12px;">
+                    <div style="
+                        display: inline-block;
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid #f3f3f3;
+                        border-top: 2px solid #007bff;
+                        border-radius: 50%;
+                        animation: spin 1s linear infinite;
+                    "></div>
+                </div>
+                <div style="color: #333; font-weight: 500;">${message}</div>
+            </div>
+        `;
+
+        // 添加动画样式
+        const style = globalThis.document.createElement("style");
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        globalThis.document.head.appendChild(style);
+
+        globalThis.document.body.appendChild(loading);
+        return loading;
+    }
+
+    private hideLoadingMessage(loadingElement: HTMLElement): void {
+        if (loadingElement && loadingElement.parentNode) {
+            loadingElement.parentNode.removeChild(loadingElement);
+        }
+    }
+
+    // 保留作为备用的简单导出方法
+    private onExport(format: "aagnet" | "mftrcad"): void {
+        // 使用新的带目录选择的导出方法
+        this.onExportWithDirectorySelection(format);
     }
 
     private updateActiveAnnotationDisplay(): void {

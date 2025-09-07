@@ -4,3 +4,4 @@
 export * from "./aagnetExporter";
 export * from "./mftrcadExporter";
 export * from "./baseExporter";
+export * from "./exportService";

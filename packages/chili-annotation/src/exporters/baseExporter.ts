@@ -50,6 +50,8 @@ export interface ExportResult {
         format: string;
         annotationCount: number;
         faceCount: number;
+        exportPath?: string;
+        fileName?: string;
     };
 }
 

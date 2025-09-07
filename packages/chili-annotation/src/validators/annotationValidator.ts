@@ -175,8 +175,10 @@ export class DefaultAnnotationValidator implements IAnnotationValidator {
 
         // 根据特征类型进行约束检查
         switch (type) {
-            case MachiningFeatureType.ThroughHole:
-            case MachiningFeatureType.BlindHole:
+            case MachiningFeatureType.ThroughHoles:
+            case MachiningFeatureType.BlindHoles:
+            case MachiningFeatureType.ThreadedHoles:
+            case MachiningFeatureType.Countersinks:
                 if (faceCount < 1) {
                     result.errors.push("Hole features must have at least 1 face (cylindrical surface)");
                 } else if (faceCount > 3) {
@@ -184,38 +186,78 @@ export class DefaultAnnotationValidator implements IAnnotationValidator {
                 }
                 break;
 
-            case MachiningFeatureType.Chamfer:
+            case MachiningFeatureType.SteppedHoles:
+                if (faceCount < 3) {
+                    result.errors.push(
+                        "Stepped hole features must have more than 2 coaxial cylindrical faces (at least 3)",
+                    );
+                } else if (faceCount > 6) {
+                    result.warnings.push("Stepped hole features typically have 3-6 faces");
+                }
+                break;
+
+            case MachiningFeatureType.Chamfers:
                 if (faceCount !== 1) {
                     result.warnings.push("Chamfer features typically have exactly 1 face");
                 }
                 break;
 
-            case MachiningFeatureType.Round:
+            case MachiningFeatureType.InnerFillets:
+            case MachiningFeatureType.OuterFillets:
                 if (faceCount !== 1) {
-                    result.warnings.push("Round features typically have exactly 1 face");
+                    result.warnings.push("Fillet features typically have exactly 1 face");
                 }
                 break;
 
-            case MachiningFeatureType.RectangularPocket:
-            case MachiningFeatureType.TriangularPocket:
-            case MachiningFeatureType.SixSidesPocket:
+            case MachiningFeatureType.ClosedPockets:
+            case MachiningFeatureType.OpenPockets:
+            case MachiningFeatureType.ComplexPockets:
+            case MachiningFeatureType.FilletedClosedPockets:
+            case MachiningFeatureType.FilletedOpenPockets:
                 if (faceCount < 2) {
                     result.errors.push("Pocket features must have at least 2 faces (bottom + sides)");
                 }
                 break;
 
-            case MachiningFeatureType.RectangularThroughSlot:
-            case MachiningFeatureType.TriangularThroughSlot:
-            case MachiningFeatureType.CircularThroughSlot:
+            case MachiningFeatureType.ThroughPockets:
                 if (faceCount < 3) {
-                    result.warnings.push("Through slot features typically have at least 3 faces");
+                    result.warnings.push("Through pocket features typically have at least 3 faces");
                 }
                 break;
 
-            case MachiningFeatureType.Stock:
-                // 坯料面通常是大的平面
+            case MachiningFeatureType.TSlots:
+            case MachiningFeatureType.Dovetails:
+                if (faceCount < 3) {
+                    result.warnings.push("Undercut features typically have at least 3 faces");
+                }
+                break;
+
+            case MachiningFeatureType.Faces:
+            case MachiningFeatureType.SlantedFaces:
+                // 面特征通常只有一个面
                 if (faceCount === 0) {
-                    result.errors.push("Stock features must have at least 1 face");
+                    result.errors.push("Face features must have at least 1 face");
+                } else if (faceCount > 1) {
+                    result.warnings.push("Face features typically have exactly 1 face");
+                }
+                break;
+
+            case MachiningFeatureType.Walls:
+            case MachiningFeatureType.FilletedWalls:
+                if (faceCount < 1) {
+                    result.errors.push("Wall features must have at least 1 face");
+                }
+                break;
+
+            case MachiningFeatureType.FilletedBosses:
+                if (faceCount < 2) {
+                    result.errors.push("Boss features must have at least 2 faces");
+                }
+                break;
+
+            case MachiningFeatureType.ContourSurfaces:
+                if (faceCount < 1) {
+                    result.errors.push("Contour surface features must have at least 1 face");
                 }
                 break;
 
@@ -240,17 +282,28 @@ export class DefaultAnnotationValidator implements IAnnotationValidator {
             MachiningFeatureType,
             { min?: number; max?: number; optimal?: number }
         > = {
-            [MachiningFeatureType.Chamfer]: { optimal: 1 },
-            [MachiningFeatureType.Round]: { optimal: 1 },
-            [MachiningFeatureType.ThroughHole]: { min: 1, max: 3, optimal: 1 },
-            [MachiningFeatureType.BlindHole]: { min: 1, max: 3, optimal: 2 },
-            [MachiningFeatureType.RectangularPocket]: { min: 2, optimal: 5 },
-            [MachiningFeatureType.TriangularPocket]: { min: 2, optimal: 4 },
-            [MachiningFeatureType.SixSidesPocket]: { min: 2, optimal: 7 },
-            [MachiningFeatureType.RectangularThroughSlot]: { min: 3, optimal: 4 },
-            [MachiningFeatureType.TriangularThroughSlot]: { min: 3, optimal: 4 },
-            [MachiningFeatureType.CircularThroughSlot]: { min: 1, optimal: 2 },
-            [MachiningFeatureType.Stock]: { min: 1 },
+            [MachiningFeatureType.Chamfers]: { optimal: 1 },
+            [MachiningFeatureType.InnerFillets]: { optimal: 1 },
+            [MachiningFeatureType.OuterFillets]: { optimal: 1 },
+            [MachiningFeatureType.ThroughHoles]: { min: 1, max: 3, optimal: 1 },
+            [MachiningFeatureType.BlindHoles]: { min: 1, max: 3, optimal: 2 },
+            [MachiningFeatureType.ThreadedHoles]: { min: 1, max: 3, optimal: 2 },
+            [MachiningFeatureType.Countersinks]: { min: 1, max: 2, optimal: 2 },
+            [MachiningFeatureType.SteppedHoles]: { min: 3, max: 6, optimal: 4 },
+            [MachiningFeatureType.ClosedPockets]: { min: 2, optimal: 5 },
+            [MachiningFeatureType.OpenPockets]: { min: 2, optimal: 4 },
+            [MachiningFeatureType.ThroughPockets]: { min: 3, optimal: 4 },
+            [MachiningFeatureType.ComplexPockets]: { min: 2, optimal: 6 },
+            [MachiningFeatureType.FilletedClosedPockets]: { min: 2, optimal: 5 },
+            [MachiningFeatureType.FilletedOpenPockets]: { min: 2, optimal: 4 },
+            [MachiningFeatureType.TSlots]: { min: 3, optimal: 4 },
+            [MachiningFeatureType.Dovetails]: { min: 3, optimal: 4 },
+            [MachiningFeatureType.Faces]: { min: 1, max: 1, optimal: 1 },
+            [MachiningFeatureType.SlantedFaces]: { min: 1, max: 1, optimal: 1 },
+            [MachiningFeatureType.Walls]: { min: 1 },
+            [MachiningFeatureType.FilletedWalls]: { min: 1 },
+            [MachiningFeatureType.FilletedBosses]: { min: 2 },
+            [MachiningFeatureType.ContourSurfaces]: { min: 1 },
             // 其他类型使用默认约束
         } as any;
 

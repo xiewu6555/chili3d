@@ -497,29 +497,13 @@ export class ExportAAGNetCommandRegistered implements ICommand {
                 return;
             }
 
-            // 生成AAGNet格式数据
-            const exportData = {
-                format: "AAGNet",
-                version: "1.0",
-                exportTime: new Date().toISOString(),
-                modelInfo: {
-                    documentName: document.name || "未命名文档",
-                    annotationCount: annotationManager.annotations.length,
-                },
-                annotations: annotationManager.annotations.map((ann: any) => ({
-                    id: ann.id,
-                    name: ann.name,
-                    type: ann.type,
-                    faces: ann.faces,
-                    properties: ann.properties,
-                    createdAt: ann.createdAt,
-                })),
-            };
-
-            console.log("AAGNet导出数据:", exportData);
-            alert(
-                `✅ AAGNet格式导出准备完成！\n格式: ${exportData.format}\n标注数量: ${exportData.annotations.length}\n\n数据已在控制台输出，实际应用中会保存为文件。`,
-            );
+            // 使用面板中的导出方法
+            const annotationPanel = (document as any)._annotationPanel;
+            if (annotationPanel && typeof annotationPanel.onExportWithDirectorySelection === "function") {
+                await annotationPanel.onExportWithDirectorySelection("aagnet");
+            } else {
+                alert("标注面板未初始化，请先启动标注模式！");
+            }
         } catch (error) {
             console.error("导出AAGNet格式失败:", error);
             alert(`导出AAGNet格式失败: ${error}`);
@@ -551,29 +535,13 @@ export class ExportMFTRCADCommandRegistered implements ICommand {
                 return;
             }
 
-            // 生成MFTRCAD格式数据
-            const exportData = {
-                format: "MFTRCAD",
-                version: "1.0",
-                exportTime: new Date().toISOString(),
-                modelInfo: {
-                    documentName: document.name || "未命名文档",
-                    annotationCount: annotationManager.annotations.length,
-                },
-                machiningFeatures: annotationManager.annotations.map((ann: any) => ({
-                    featureId: ann.id,
-                    featureName: ann.name,
-                    featureType: ann.type,
-                    associatedFaces: ann.faces,
-                    parameters: ann.properties,
-                    timestamp: ann.createdAt,
-                })),
-            };
-
-            console.log("MFTRCAD导出数据:", exportData);
-            alert(
-                `✅ MFTRCAD格式导出准备完成！\n格式: ${exportData.format}\n特征数量: ${exportData.machiningFeatures.length}\n\n数据已在控制台输出，实际应用中会保存为文件。`,
-            );
+            // 使用面板中的导出方法
+            const annotationPanel = (document as any)._annotationPanel;
+            if (annotationPanel && typeof annotationPanel.onExportWithDirectorySelection === "function") {
+                await annotationPanel.onExportWithDirectorySelection("mftrcad");
+            } else {
+                alert("标注面板未初始化，请先启动标注模式！");
+            }
         } catch (error) {
             console.error("导出MFTRCAD格式失败:", error);
             alert(`导出MFTRCAD格式失败: ${error}`);

@@ -129,29 +129,38 @@ export class GeometryValidator {
         const type = annotation.type;
 
         switch (type) {
-            case MachiningFeatureType.ThroughHole:
-            case MachiningFeatureType.BlindHole:
+            case MachiningFeatureType.ThroughHoles:
+            case MachiningFeatureType.BlindHoles:
+            case MachiningFeatureType.ThreadedHoles:
+            case MachiningFeatureType.Countersinks:
                 this.validateHoleParameters(annotation, params, result);
                 break;
 
-            case MachiningFeatureType.Chamfer:
+            case MachiningFeatureType.SteppedHoles:
+                this.validateSteppedHoleParameters(annotation, params, result);
+                break;
+
+            case MachiningFeatureType.Chamfers:
                 this.validateChamferParameters(annotation, params, result);
                 break;
 
-            case MachiningFeatureType.Round:
-                this.validateRoundParameters(annotation, params, result);
+            case MachiningFeatureType.InnerFillets:
+            case MachiningFeatureType.OuterFillets:
+                this.validateFilletParameters(annotation, params, result);
                 break;
 
-            case MachiningFeatureType.RectangularPocket:
-            case MachiningFeatureType.TriangularPocket:
-            case MachiningFeatureType.SixSidesPocket:
+            case MachiningFeatureType.ClosedPockets:
+            case MachiningFeatureType.OpenPockets:
+            case MachiningFeatureType.ThroughPockets:
+            case MachiningFeatureType.ComplexPockets:
+            case MachiningFeatureType.FilletedClosedPockets:
+            case MachiningFeatureType.FilletedOpenPockets:
                 this.validatePocketParameters(annotation, params, result);
                 break;
 
-            case MachiningFeatureType.RectangularThroughSlot:
-            case MachiningFeatureType.TriangularThroughSlot:
-            case MachiningFeatureType.CircularThroughSlot:
-                this.validateSlotParameters(annotation, params, result);
+            case MachiningFeatureType.TSlots:
+            case MachiningFeatureType.Dovetails:
+                this.validateUndercutParameters(annotation, params, result);
                 break;
 
             default:
@@ -175,8 +184,13 @@ export class GeometryValidator {
         }
 
         // 盲孔必须有深度
-        if (annotation.type === MachiningFeatureType.BlindHole && !("depth" in params)) {
+        if (annotation.type === MachiningFeatureType.BlindHoles && !("depth" in params)) {
             result.errors.push(`Blind hole '${annotation.name}' must have a depth parameter`);
+        }
+
+        // 螺纹孔需要螺纹规格
+        if (annotation.type === MachiningFeatureType.ThreadedHoles && !("threadSpec" in params)) {
+            result.warnings.push(`Threaded hole '${annotation.name}' should have thread specification`);
         }
 
         // 验证孔的几何合理性
@@ -187,6 +201,61 @@ export class GeometryValidator {
             if (depth > diameter * 10) {
                 result.warnings.push(
                     `Hole depth (${depth}mm) is much larger than diameter (${diameter}mm). Check aspect ratio.`,
+                );
+            }
+        }
+    }
+
+    /**
+     * 验证阶梯孔参数
+     */
+    private validateSteppedHoleParameters(
+        annotation: Annotation,
+        params: Record<string, any>,
+        result: ValidationResult,
+    ): void {
+        // 阶梯孔必须有多个直径参数 (大于2个，即至少3个)
+        const diameterParams = Object.keys(params).filter((key) => key.startsWith("diameter"));
+
+        if (diameterParams.length < 3) {
+            result.errors.push(
+                `Stepped hole '${annotation.name}' must have more than 2 diameter parameters (at least diameter1, diameter2, diameter3)`,
+            );
+        }
+
+        // 阶梯孔必须有深度参数
+        const depthParams = Object.keys(params).filter((key) => key.startsWith("depth"));
+
+        if (depthParams.length < 1) {
+            result.errors.push(`Stepped hole '${annotation.name}' must have depth parameters`);
+        }
+
+        // 验证直径递增关系
+        if (diameterParams.length >= 2) {
+            const diameters = diameterParams
+                .map((key) => ({ key, value: params[key] }))
+                .sort((a, b) => a.key.localeCompare(b.key));
+
+            for (let i = 1; i < diameters.length; i++) {
+                const prevDiameter = diameters[i - 1].value;
+                const currentDiameter = diameters[i].value;
+
+                if (currentDiameter <= prevDiameter) {
+                    result.warnings.push(
+                        `Stepped hole '${annotation.name}': diameter${i + 1} (${currentDiameter}mm) should be larger than diameter${i} (${prevDiameter}mm)`,
+                    );
+                }
+            }
+        }
+
+        // 验证阶梯孔的深度比例
+        if ("totalDepth" in params && diameterParams.length > 0) {
+            const totalDepth = params["totalDepth"];
+            const maxDiameter = Math.max(...diameterParams.map((key) => params[key]));
+
+            if (totalDepth > maxDiameter * 8) {
+                result.warnings.push(
+                    `Stepped hole depth (${totalDepth}mm) is much larger than maximum diameter (${maxDiameter}mm). Check aspect ratio.`,
                 );
             }
         }
@@ -229,21 +298,21 @@ export class GeometryValidator {
     /**
      * 验证圆角参数
      */
-    private validateRoundParameters(
+    private validateFilletParameters(
         annotation: Annotation,
         params: Record<string, any>,
         result: ValidationResult,
     ): void {
         // 圆角必须有半径
         if (!("radius" in params)) {
-            result.errors.push(`Round feature '${annotation.name}' must have a radius parameter`);
+            result.errors.push(`Fillet feature '${annotation.name}' must have a radius parameter`);
         }
 
         // 验证圆角半径合理性
         if ("radius" in params) {
             const radius = params["radius"];
             if (radius > 50) {
-                result.warnings.push(`Large round radius (${radius}mm). Please verify this is correct.`);
+                result.warnings.push(`Large fillet radius (${radius}mm). Please verify this is correct.`);
             }
         }
     }
@@ -262,17 +331,44 @@ export class GeometryValidator {
         }
 
         // 根据凹槽类型验证尺寸参数
-        if (annotation.type === MachiningFeatureType.RectangularPocket) {
+        if (
+            annotation.type === MachiningFeatureType.ClosedPockets ||
+            annotation.type === MachiningFeatureType.FilletedClosedPockets
+        ) {
             if (!("length" in params) || !("width" in params)) {
-                result.errors.push(
-                    `Rectangular pocket '${annotation.name}' must have length and width parameters`,
-                );
+                result.warnings.push(`Pocket '${annotation.name}' should have length and width parameters`);
             }
-        } else if (annotation.type === MachiningFeatureType.TriangularPocket) {
-            if (!("side1" in params) || !("side2" in params) || !("side3" in params)) {
-                result.warnings.push(
-                    `Triangular pocket '${annotation.name}' should have side length parameters`,
-                );
+        }
+    }
+
+    /**
+     * 验证底切特征参数
+     */
+    private validateUndercutParameters(
+        annotation: Annotation,
+        params: Record<string, any>,
+        result: ValidationResult,
+    ): void {
+        // T型槽和燕尾槽特征通常有宽度和深度
+        if (!("width" in params)) {
+            result.warnings.push(`Undercut feature '${annotation.name}' should have a width parameter`);
+        }
+
+        if (!("depth" in params)) {
+            result.warnings.push(`Undercut feature '${annotation.name}' should have a depth parameter`);
+        }
+
+        // T型槽特征的特殊参数
+        if (annotation.type === MachiningFeatureType.TSlots) {
+            if (!("slotWidth" in params)) {
+                result.warnings.push(`T-slot '${annotation.name}' should have slot width parameter`);
+            }
+        }
+
+        // 燕尾槽特征的特殊参数
+        if (annotation.type === MachiningFeatureType.Dovetails) {
+            if (!("angle" in params)) {
+                result.warnings.push(`Dovetail '${annotation.name}' should have angle parameter`);
             }
         }
     }
@@ -429,7 +525,10 @@ export class GeometryValidator {
     private checkGeometricConflicts(annotations: Annotation[], result: ValidationResult): void {
         // 检查同一位置的多个孔特征
         const holes = annotations.filter(
-            (a) => a.type === MachiningFeatureType.ThroughHole || a.type === MachiningFeatureType.BlindHole,
+            (a) =>
+                a.type === MachiningFeatureType.ThroughHoles ||
+                a.type === MachiningFeatureType.BlindHoles ||
+                a.type === MachiningFeatureType.SteppedHoles,
         );
 
         for (let i = 0; i < holes.length; i++) {
