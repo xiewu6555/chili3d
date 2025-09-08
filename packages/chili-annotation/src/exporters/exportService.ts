@@ -452,12 +452,83 @@ export class ExportService {
     }
 
     /**
+     * 转换导出数据中的面ID：从0基索引转换为1基索引（与OCC原生保持一致）
+     */
+    private convertFaceIdsToOccNative(data: any): any {
+        if (data === null || data === undefined) {
+            return data;
+        }
+
+        if (Array.isArray(data)) {
+            return data.map((item) => this.convertFaceIdsToOccNative(item));
+        }
+
+        if (typeof data === "object") {
+            const converted: any = {};
+            for (const [key, value] of Object.entries(data)) {
+                // 检查是否是面ID相关的属性
+                if (
+                    (key === "seg" || key === "cls" || key === "bottom") &&
+                    typeof value === "object" &&
+                    !Array.isArray(value)
+                ) {
+                    // 对于标签对象，将键（面ID）转换为1基索引
+                    const convertedLabels: any = {};
+                    for (const [faceIdStr, labelValue] of Object.entries(value as any)) {
+                        const faceId = parseInt(faceIdStr);
+                        if (!isNaN(faceId)) {
+                            // 将0基索引转换为1基索引
+                            const occNativeFaceId = faceId + 1;
+                            convertedLabels[occNativeFaceId.toString()] = labelValue;
+                        } else {
+                            convertedLabels[faceIdStr] = labelValue;
+                        }
+                    }
+                    converted[key] = convertedLabels;
+                } else if (key === "inst" && Array.isArray(value)) {
+                    // 对于实例分割，需要根据格式处理
+                    if (value.length > 0 && Array.isArray(value[0])) {
+                        // 检查是否是邻接矩阵（方阵）
+                        const isMatrix =
+                            value.length > 0 && Array.isArray(value[0]) && value[0].length === value.length;
+                        if (isMatrix) {
+                            // AAGNet格式的邻接矩阵不需要修改索引，因为矩阵索引本身就是0基的
+                            // 矩阵表示的是面与面之间的关系，索引仍然保持0基
+                            converted[key] = value;
+                        } else {
+                            // MFTRCAD格式的实例数组，将面ID加1
+                            converted[key] = value.map((instance) => {
+                                if (Array.isArray(instance)) {
+                                    return instance.map((faceId) =>
+                                        typeof faceId === "number" ? faceId + 1 : faceId,
+                                    );
+                                }
+                                return instance;
+                            });
+                        }
+                    } else {
+                        converted[key] = value;
+                    }
+                } else {
+                    converted[key] = this.convertFaceIdsToOccNative(value);
+                }
+            }
+            return converted;
+        }
+
+        return data;
+    }
+
+    /**
      * 使用文件句柄保存文件
      */
     private async saveFileWithHandle(data: any, fileHandle: FileSystemFileHandle): Promise<void> {
         try {
             const writable = await fileHandle.createWritable();
-            const content = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+            // 在保存前转换面ID为OCC原生格式
+            const convertedData = this.convertFaceIdsToOccNative(data);
+            const content =
+                typeof convertedData === "string" ? convertedData : JSON.stringify(convertedData, null, 2);
             await writable.write(content);
             await writable.close();
         } catch (error) {
@@ -486,7 +557,10 @@ export class ExportService {
      * 降级方案：触发文件下载
      */
     private downloadFile(data: any, fileName: string): void {
-        const content = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+        // 在下载前转换面ID为OCC原生格式
+        const convertedData = this.convertFaceIdsToOccNative(data);
+        const content =
+            typeof convertedData === "string" ? convertedData : JSON.stringify(convertedData, null, 2);
         const blob = new Blob([content], { type: "application/json" });
         const url = URL.createObjectURL(blob);
 
