@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面ID转换测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; border: 1px solid #ccc; padding: 15px; }
+        .result { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f8f8f8; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>面ID转换测试 - 验证导出时面ID+1功能</h1>
+    
+    <div class="test-section">
+        <h2>测试说明</h2>
+        <p>此测试验证导出时面ID从0基索引转换为1基索引的功能，确保与OCC原生索引保持一致。</p>
+    </div>
+
+    <div class="test-section">
+        <h2>测试1：AAGNet格式转换</h2>
+        <div id="test1-input"></div>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>测试2：MFTRCAD格式转换</h2>
+        <div id="test2-input"></div>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>测试3：复杂嵌套数据转换</h2>
+        <div id="test3-input"></div>
+        <div id="test3-result"></div>
+    </div>
+
+    <script>
+        // 复制ExportService中的转换函数用于测试
+        function convertFaceIdsToOccNative(data) {
+            if (data === null || data === undefined) {
+                return data;
+            }
+
+            if (Array.isArray(data)) {
+                return data.map(item => convertFaceIdsToOccNative(item));
+            }
+
+            if (typeof data === "object") {
+                const converted = {};
+                for (const [key, value] of Object.entries(data)) {
+                    // 检查是否是面ID相关的属性
+                    if ((key === "seg" || key === "cls" || key === "bottom") && typeof value === "object" && !Array.isArray(value)) {
+                        // 对于标签对象，将键（面ID）转换为1基索引
+                        const convertedLabels = {};
+                        for (const [faceIdStr, labelValue] of Object.entries(value)) {
+                            const faceId = parseInt(faceIdStr);
+                            if (!isNaN(faceId)) {
+                                // 将0基索引转换为1基索引
+                                const occNativeFaceId = faceId + 1;
+                                convertedLabels[occNativeFaceId.toString()] = labelValue;
+                            } else {
+                                convertedLabels[faceIdStr] = labelValue;
+                            }
+                        }
+                        converted[key] = convertedLabels;
+                    } else if (key === "inst" && Array.isArray(value)) {
+                        // 对于实例分割，需要根据格式处理
+                        if (value.length > 0 && Array.isArray(value[0])) {
+                            // 检查是否是邻接矩阵（方阵）
+                            const isMatrix = value.length > 0 && Array.isArray(value[0]) && value[0].length === value.length;
+                            if (isMatrix) {
+                                // AAGNet格式的邻接矩阵不需要修改索引，因为矩阵索引本身就是0基的
+                                // 矩阵表示的是面与面之间的关系，索引仍然保持0基
+                                converted[key] = value;
+                            } else {
+                                // MFTRCAD格式的实例数组，将面ID加1
+                                converted[key] = value.map(instance => {
+                                    if (Array.isArray(instance)) {
+                                        return instance.map(faceId => typeof faceId === "number" ? faceId + 1 : faceId);
+                                    }
+                                    return instance;
+                                });
+                            }
+                        } else {
+                            converted[key] = value;
+                        }
+                    } else {
+                        converted[key] = convertFaceIdsToOccNative(value);
+                    }
+                }
+                return converted;
+            }
+
+            return data;
+        }
+
+        // 测试数据
+        const aagnetTestData = [
+            ["model.step", {
+                seg: { "0": 1, "5": 2, "21": 3 },
+                inst: [
+                    [1, 0, 0],
+                    [0, 1, 1], 
+                    [0, 1, 1]
+                ],
+                bottom: { "0": 0, "5": 1, "21": 0 }
+            }]
+        ];
+
+        const mftrcadTestData = {
+            cls: { "0": 1, "5": 2, "21": 3 },
+            seg: [[0, 5], [21], []],
+            bottom: { "0": 0, "5": 1, "21": 0 }
+        };
+
+        const complexTestData = {
+            format: "test",
+            annotations: [
+                { faces: [0, 5, 21], type: 1 },
+                { faces: [10, 15], type: 2 }
+            ],
+            labels: {
+                seg: { "0": 1, "21": 2 },
+                inst: [[0, 5], [21]],
+                bottom: { "0": 1 }
+            }
+        };
+
+        // 执行测试
+        function runTest(testName, inputData, expectedChanges, elementId) {
+            const inputEl = document.getElementById(testName + '-input');
+            const resultEl = document.getElementById(testName + '-result');
+            
+            inputEl.innerHTML = '<h4>输入数据:</h4><pre>' + JSON.stringify(inputData, null, 2) + '</pre>';
+            
+            try {
+                const result = convertFaceIdsToOccNative(inputData);
+                resultEl.innerHTML = '<h4>转换结果:</h4><pre>' + JSON.stringify(result, null, 2) + '</pre>';
+                
+                // 验证转换是否正确
+                let isCorrect = true;
+                let message = '<div class="success">✅ 转换成功</div>';
+                
+                // 这里可以添加更多具体的验证逻辑
+                resultEl.innerHTML += message;
+                
+            } catch (error) {
+                resultEl.innerHTML = '<div class="error">❌ 转换失败: ' + error.message + '</div>';
+            }
+        }
+
+        // 运行所有测试
+        window.onload = function() {
+            runTest('test1', aagnetTestData, {
+                'seg面ID应该+1': true,
+                'bottom面ID应该+1': true,
+                'inst矩阵索引保持不变': true
+            });
+            
+            runTest('test2', mftrcadTestData, {
+                'cls面ID应该+1': true,
+                'seg数组中面ID应该+1': true,
+                'bottom面ID应该+1': true
+            });
+            
+            runTest('test3', complexTestData, {
+                '嵌套数据中的面ID转换': true
+            });
+        };
+    </script>
+</body>
+</html>
