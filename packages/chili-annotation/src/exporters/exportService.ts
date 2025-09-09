@@ -364,6 +364,7 @@ export class ExportService {
 
     /**
      * 导出标注数据
+     * 导出的JSON文件名与STEP模型文件名保持一致（仅扩展名改为.json）
      */
     async exportAnnotations(
         annotations: AnnotationNode[],
@@ -373,9 +374,9 @@ export class ExportService {
         config?: ExportConfig,
     ): Promise<ExportResult> {
         try {
-            // 创建文件名
-            const timestamp = new Date().toISOString().replace(/[:.]/g, "-").substring(0, 19);
-            const fileName = `${modelFileName}_${format}_${timestamp}.json`;
+            // 创建文件名：使用STEP模型文件名，确保扩展名为.json
+            const baseFileName = modelFileName.replace(/\.(step|stp)$/i, "");
+            const fileName = `${baseFileName}.json`;
 
             // 显示文件保存对话框
             const fileSelection = await this.selectExportFile(fileName);
@@ -453,6 +454,10 @@ export class ExportService {
 
     /**
      * 转换导出数据中的面ID：从0基索引转换为1基索引（与OCC原生保持一致）
+     * 支持的字段：
+     * - cls, bottom: 对象类型，转换键（面ID）
+     * - seg: MFTRCAD格式的实例数组，转换数组中的面ID
+     * - inst: AAGNet格式的实例数组或邻接矩阵，根据格式处理
      */
     private convertFaceIdsToOccNative(data: any): any {
         if (data === null || data === undefined) {
@@ -485,7 +490,7 @@ export class ExportService {
                         }
                     }
                     converted[key] = convertedLabels;
-                } else if (key === "inst" && Array.isArray(value)) {
+                } else if ((key === "inst" || key === "seg") && Array.isArray(value)) {
                     // 对于实例分割，需要根据格式处理
                     if (value.length > 0 && Array.isArray(value[0])) {
                         // 检查是否是邻接矩阵（方阵）

@@ -581,8 +581,8 @@ export class AnnotationPanel {
             // 显示加载状态
             const loadingElement = this.showLoadingMessage("正在导出标注数据...");
 
-            // 获取模型文件名
-            const modelFileName = this._document?.name || "model";
+            // 获取模型文件名：优先从导入的节点名称获取，后备方案使用文档名称
+            const modelFileName = this.getModelFileName();
             const totalFaceCount = this.calculateTotalFaceCount();
 
             // 执行导出（包含文件保存对话框）
@@ -616,6 +616,43 @@ export class AnnotationPanel {
             console.error("Export failed:", error);
             alert(`导出过程中发生错误：${error}`);
         }
+    }
+
+    /**
+     * 获取模型文件名
+     * 优先从导入的节点名称获取（如_model38.stp），后备方案使用文档名称
+     */
+    private getModelFileName(): string {
+        // 尝试从文档的根节点中找到STEP/STP文件节点
+        const rootNode = this._document?.rootNode;
+        if (rootNode) {
+            // 遍历根节点的子节点，查找STEP文件节点
+            let child = rootNode.firstChild;
+            while (child) {
+                const childName = child.name;
+                if (
+                    childName &&
+                    (childName.toLowerCase().endsWith(".step") || childName.toLowerCase().endsWith(".stp"))
+                ) {
+                    return childName;
+                }
+                child = child.nextSibling;
+            }
+
+            // 如果没找到STEP文件节点，查找其他可能的模型节点
+            child = rootNode.firstChild;
+            while (child) {
+                const childName = child.name;
+                // 检查是否是常见的CAD文件格式
+                if (childName && /\.(step|stp|iges|igs|brep|stl)$/i.test(childName)) {
+                    return childName;
+                }
+                child = child.nextSibling;
+            }
+        }
+
+        // 后备方案：使用文档名称
+        return this._document?.name || "model";
     }
 
     private calculateTotalFaceCount(): number {
