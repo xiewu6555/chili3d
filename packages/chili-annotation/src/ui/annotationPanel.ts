@@ -1,7 +1,7 @@
 // Part of the Chili3d Project, under the AGPL-3.0 License.
 // See LICENSE file in the project root for full license information.
 
-import { IDocument } from "chili-core";
+import { IDocument, PubSub } from "chili-core";
 import { AnnotationManager } from "../annotationManager";
 import {
     MachiningFeatureType,
@@ -28,6 +28,7 @@ export class AnnotationPanel {
     private _selectedFacesInfo: HTMLDivElement | undefined;
     private _annotationsList: HTMLDivElement | undefined;
     private _exportService: ExportService;
+    private _commandExecuteHandler?: (commandName: string) => void;
 
     constructor(manager: AnnotationManager, document: IDocument) {
         this._manager = manager;
@@ -74,6 +75,15 @@ export class AnnotationPanel {
         header.style.cssText = `
             border-bottom: 1px solid #ddd;
             padding-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        `;
+
+        // 左侧标题区域
+        const titleArea = globalThis.globalThis.document.createElement("div");
+        titleArea.style.cssText = `
+            flex: 1;
         `;
 
         const title = globalThis.globalThis.document.createElement("span");
@@ -93,8 +103,48 @@ export class AnnotationPanel {
             margin-top: 4px;
         `;
 
-        header.appendChild(title);
-        header.appendChild(subtitle);
+        titleArea.appendChild(title);
+        titleArea.appendChild(subtitle);
+
+        // 右侧关闭按钮
+        const closeButton = globalThis.globalThis.document.createElement("button");
+        closeButton.innerHTML = "×";
+        closeButton.title = "关闭标注面板";
+        closeButton.style.cssText = `
+            background: none;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        `;
+
+        // 关闭按钮悬停效果
+        closeButton.addEventListener("mouseenter", () => {
+            closeButton.style.backgroundColor = "#f5f5f5";
+            closeButton.style.color = "#333";
+        });
+
+        closeButton.addEventListener("mouseleave", () => {
+            closeButton.style.backgroundColor = "transparent";
+            closeButton.style.color = "#999";
+        });
+
+        // 关闭按钮点击事件
+        closeButton.addEventListener("click", () => {
+            this.closePanel();
+        });
+
+        header.appendChild(titleArea);
+        header.appendChild(closeButton);
         return header;
     }
 
@@ -401,6 +451,19 @@ export class AnnotationPanel {
             this.updateAnnotationsList();
             this.updateActiveAnnotationDisplay();
         });
+
+        // 监听命令执行事件 - 当切换到其他工具时自动关闭面板
+        this._commandExecuteHandler = (commandName: string) => {
+            console.log(`🔧 [COMMAND] Command executed: ${commandName}`);
+
+            // 如果执行的不是标注相关命令，则关闭面板
+            if (!this.isAnnotationCommand(commandName)) {
+                console.log(`🚪 [AUTO-CLOSE] Non-annotation command detected, closing panel`);
+                this.closePanel();
+            }
+        };
+
+        PubSub.default.sub("executeCommand", this._commandExecuteHandler);
 
         console.log("✅ [EVENT SETUP] All event listeners configured");
     }
@@ -873,9 +936,72 @@ export class AnnotationPanel {
     }
 
     /**
+     * 关闭面板
+     */
+    closePanel(): void {
+        console.log("🚪 Closing annotation panel");
+
+        // 清除面高亮
+        this.clearSelectedFacesHighlight();
+
+        // 清除当前选中的面
+        this._manager.clearSelection();
+
+        // 隐藏面板
+        this._element.style.display = "none";
+
+        // 触发面板关闭事件（如果需要通知其他组件）
+        this.onPanelClosed();
+    }
+
+    /**
+     * 显示面板
+     */
+    showPanel(): void {
+        console.log("🚪 Opening annotation panel");
+        this._element.style.display = "flex";
+    }
+
+    /**
+     * 判断是否为标注相关命令
+     */
+    private isAnnotationCommand(commandName: string): boolean {
+        const annotationCommands = [
+            "annotation.start",
+            "annotation.stop",
+            "annotation.create",
+            "annotation.delete",
+            "annotation.validate",
+            "annotation.clear",
+            "annotation.export.aagnet",
+            "annotation.export.mftrcad",
+        ];
+
+        return annotationCommands.includes(commandName);
+    }
+
+    /**
+     * 面板关闭事件处理
+     */
+    private onPanelClosed(): void {
+        // 这里可以添加面板关闭时的清理逻辑
+        // 例如通知应用程序状态变更
+        console.log("📢 Annotation panel closed");
+
+        // 可以在这里发送事件给应用程序
+        // 例如: PubSub.default.pub("annotationPanelClosed");
+    }
+
+    /**
      * 销毁面板
      */
     dispose(): void {
+        // 清理PubSub监听器
+        if (this._commandExecuteHandler) {
+            PubSub.default.remove("executeCommand", this._commandExecuteHandler);
+            this._commandExecuteHandler = undefined;
+        }
+
         if (this._element.parentNode) {
             this._element.parentNode.removeChild(this._element);
         }

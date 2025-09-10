@@ -116,8 +116,9 @@ export class StopAnnotationCommandRegistered implements ICommand {
                 (document as any)._faceSelectionHandler = null;
             }
 
-            // 清理标注面板
+            // 关闭标注面板
             if (annotationPanel) {
+                annotationPanel.closePanel();
                 annotationPanel.dispose();
                 (document as any)._annotationPanel = null;
             }
